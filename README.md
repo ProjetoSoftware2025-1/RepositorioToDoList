@@ -5,8 +5,7 @@
 Sistema de gerenciamento de tarefas com autenticação de usuários, desenvolvido com Django (backend) e React (frontend).  
 
 ## 🛠 Tecnologias  
-- **Backend**: Django + Django REST Framework (DRF)  
-- **Frontend**: React 
+- **Backend e frontend**: Django + Django REST Framework (DRF)  
 - **Banco de Dados**: SQLite
 - **Autenticação**: JWT (JSON Web Tokens)  
 - **Ferramentas**: GitHub Projects, Postman, Figma  

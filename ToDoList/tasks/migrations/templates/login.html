@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly - Login</title>
+    {% load static %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .container {
+            width:  1540px;
+            height: 1000px;
+            background-color: #1C5568;
+            color: white;
+            padding: 280px 75px;;
+            border-radius: 10px;
+            position: fixed;
+        
+        }
+        
+        .login-box {
+            position: absolute;
+            top: 46%;
+            left: 70%;
+            transform: translate(-50%, -45%);
+            background-color: #e8f1f2;
+            padding: 50px;
+            border-radius: 5px;
+            width: 500px;
+            color: #333;
+            height:480px;
+        }
+        
+        h1 {
+            color: #FFF;
+
+             font-family: Inter;
+             font-size: 70px;
+             font-style: normal;
+             font-weight: 900;
+             line-height: normal;
+             padding-left: 100px;
+             margin-right: 100px; 
+             max-width: 800px;
+            
+        }
+        
+        .app-title {
+         max-width: 600px; 
+        }
+        
+        h2 {
+            font-size: 35px;
+            margin-top: -25px; /* sobe o título */
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .app-title {
+            margin-bottom: 10px;
+        }
+        
+        label {
+              font-size: 22px;  /* Aumenta o tamanho da fonte */
+              font-weight: 600;  /* Deixa o texto mais grosso */
+              margin-left: 15px;  /* Move para a direita, você pode aumentar ou diminuir esse valor */
+                                   /* Se quiser mover para a esquerda, use margin-right */
+              text-align: left;  /* Alinha o texto à esquerda */
+              top: 37px;
+              position:relative;
+        }
+        
+        input[type="text"], 
+        input[type="password"], 
+        input[type="email"] {
+            width: 95%;
+            padding: 20px;
+            margin-bottom: 35px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            display: block;
+            margin: 10px auto 0 auto;
+            position:relative;
+            top: 30px;
+        }
+        
+        .login-button {
+            width: 5cqi;
+            padding: 15px;
+            background-color: #0d9ebb;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            width: 70%;
+            margin-top: 15px;
+            font-weight: bold;
+            top: 30px;
+            margin-bottom: 5px;
+            display: block;
+            margin: 78px auto 0 auto;
+            font-size: 20px;
+        }
+        
+        .login-button:hover {
+            background-color: #0b87a1;
+        }
+        
+        .forgot-password {
+         position: relative;
+         top: 55px;
+         font-size: 20px;
+         text-align: center;
+         display: block; 
+        }
+
+        
+        .register-link {
+            font-size: 20px;
+            text-align: center;
+            top: 22px;
+            position:relative
+        }
+        
+        a {
+            color: #0d9ebb;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 16px;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            color: #388e3c;
+            font-size: 16px;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="app-title">
+            <h1>
+                 Taskly:
+                 transforme <br>
+                 tarefas em conquistas,<br>
+                 todos os dias.
+            </h1>
+        </div>
+        
+        <div class="login-box">
+            <h2>Bem-vindo(a)</h2>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="{% if message.tags == 'success' %}success-message{% elif message.tags == 'error' %}error-message{% else %}error-message{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.non_field_errors %}
+                <div class="error-message">
+                    {{ form.non_field_errors.0 }}
+                </div>
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+            
+                <label for="username">Usuário</label>
+                <input type="text" id="username" name="username" value="{{ form.username.value|default:'' }}" required>
+                {% if form.username.errors %}
+                    <div class="error-message">{{ form.username.errors.0 }}</div>
+                {% endif %}
+                
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required>
+                {% if form.password.errors %}
+                    <div class="error-message">{{ form.password.errors.0 }}</div>
+                {% endif %}
+                
+                <div class="forgot-password">
+                   <a href="{% url 'password_reset' %}">Esqueceu a senha?</a>
+                </div>
+                
+                <button type="submit" class="login-button">LOGIN</button>
+                
+                <div class="register-link">
+                    Não tem uma conta? <a href="{% url 'cadastro' %}">Inscreva-se aqui</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

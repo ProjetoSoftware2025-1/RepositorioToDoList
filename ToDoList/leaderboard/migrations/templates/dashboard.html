@@ -1,0 +1,566 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            background: #2c3e50;
+            color: white;
+            padding: 0;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: #34495e;
+            border-bottom: 1px solid #4a5f7a;
+        }
+
+        .sidebar-header h2 {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .nav-item:hover {
+            background: #34495e;
+            border-left-color: #3498db;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #3498db;
+            border-left-color: #2980b9;
+        }
+
+        .nav-item span {
+            margin-left: 10px;
+            font-size: 14px;
+        }
+
+        .user-section {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #34495e;
+            border-radius: 8px;
+        }
+
+        .user-avatar-mini {
+            width: 30px;
+            height: 30px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 220px;
+            flex: 1;
+            padding: 30px 40px;
+            max-width: calc(100vw - 220px);
+        }
+
+        /* HEADER */
+        .page-header {
+            background: white;
+            padding: 25px 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-tag {
+            background: #3498db;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px 25px;
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 15px;
+        }
+
+        .user-info h3 {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .user-points {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* LEADER SECTION */
+        .leader-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .leader-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .crown {
+            font-size: 28px;
+            margin-right: 15px;
+        }
+
+        .leader-title {
+            color: #2c3e50;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .leader-subtitle {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* STATS GRID */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 25px 20px;
+            border-radius: 12px;
+            text-align: center;
+            border-top: 4px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-box.pendente { border-top-color: #f39c12; }
+        .stat-box.progresso { border-top-color: #3498db; }
+        .stat-box.concluidas { border-top-color: #27ae60; }
+        .stat-box.atrasadas { border-top-color: #e74c3c; }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        /* TASKS SECTION */
+        .tasks-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+            margin-top: 30px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .task-card h3 {
+            color: #2c3e50;
+            font-size: 20px;
+            margin-bottom: 25px;
+        }
+
+        .task-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #27ae60;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .task-item.overdue {
+            border-left-color: #e74c3c;
+            background: #fff5f5;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-title {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .task-points {
+            background: #27ae60;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .task-points.no-points {
+            background: #95a5a6;
+        }
+
+        .task-time {
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                min-height: auto;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 20px;
+            }
+            
+            .tasks-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>TASKLY</h2>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{% url 'dashboard' %}" class="nav-item active">
+                <span>📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'tasks' %}" class="nav-item">
+                <span>📋</span>
+                <span>Tarefas</span>
+            </a>
+            <a href="{% url 'reports' %}" class="nav-item">
+                <span>📈</span>
+                <span>Relatórios</span>
+            </a>
+            <a href="{% url 'calendar' %}" class="nav-item">
+                <span>📅</span>
+                <span>Calendário</span>
+            </a>
+            <a href="{% url 'ranking' %}" class="nav-item">
+                <span>🏆</span>
+                <span>Ranking</span>
+            </a>
+        </div>
+        
+        <div class="user-section">
+            <div class="user-item">
+                <div class="user-avatar-mini">{{ user.first_name.0|default:"U" }}</div>
+                <span>{{ user.username|default:"Usuário" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <div class="page-header">
+            <div class="header-left">
+                <h1>Taskly - gerenciador de tarefas</h1>
+                <span class="dashboard-tag">Dashboard</span>
+            </div>
+            <div class="header-right">
+                <div class="user-avatar">{{ user_points|default:"0" }}</div>
+                <div class="user-info">
+                    <h3>{{ user.get_full_name|default:user.username }}</h3>
+                    <div class="user-points">Pontuação: {{ user_points|default:"0" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEADER SECTION -->
+        <div class="leader-card">
+            <div class="leader-header">
+                <span class="crown">👑</span>
+                <div>
+                    <div class="leader-title">Líder da semana: {{ leader.name|default:"Nenhum líder" }}</div>
+                    <div class="leader-subtitle">{{ leader.completed_tasks|default:"0" }} tarefas concluídas e {{ leader.points|default:"0" }} pontos</div>
+                </div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-box pendente">
+                    <div class="stat-number" data-target="{{ stats.pending|default:'0' }}">0</div>
+                    <div class="stat-label">Pendente</div>
+                </div>
+                <div class="stat-box progresso">
+                    <div class="stat-number" data-target="{{ stats.in_progress|default:'0' }}">0</div>
+                    <div class="stat-label">Em Progresso</div>
+                </div>
+                <div class="stat-box concluidas">
+                    <div class="stat-number" data-target="{{ stats.completed|default:'0' }}">0</div>
+                    <div class="stat-label">Concluídas</div>
+                </div>
+                <div class="stat-box atrasadas">
+                    <div class="stat-number" data-target="{{ stats.overdue|default:'0' }}">0</div>
+                    <div class="stat-label">Atrasadas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TASKS SECTION -->
+        <div class="tasks-section">
+            <div class="task-card">
+                <h3>Tarefas de Hoje</h3>
+                {% for task in today_tasks %}
+                    <div class="task-item">
+                        <div class="task-header">
+                            <div class="task-title">{{ task.title }}</div>
+                            <div class="task-points">
+                                {% if task.points %}+ {{ task.points }} ponto{{ task.points|pluralize }}{% else %}Sem ponto{% endif %}
+                            </div>
+                        </div>
+                        <div class="task-time">Prazo: {{ task.due_date|date:"d/m/Y H:i" }}</div>
+                    </div>
+                {% empty %}
+                    <div class="task-item">
+                        <div class="task-header">
+                            <div class="task-title">Nenhuma tarefa para hoje</div>
+                            <div class="task-points no-points">-</div>
+                        </div>
+                        <div class="task-time">Aproveite o dia!</div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="task-card">
+                <h3>Tarefas Atrasadas</h3>
+                {% for task in overdue_tasks %}
+                    <div class="task-item overdue">
+                        <div class="task-header">
+                            <div class="task-title">{{ task.title }}</div>
+                            <div class="task-points no-points">Sem ponto</div>
+                        </div>
+                        <div class="task-time">Prazo: {{ task.due_date|date:"d/m/Y H:i" }}</div>
+                    </div>
+                {% empty %}
+                    <div class="task-item">
+                        <div class="task-header">
+                            <div class="task-title">Nenhuma tarefa atrasada</div>
+                            <div class="task-points">Parabéns! 🎉</div>
+                        </div>
+                        <div class="task-time">Continue assim!</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navegação da sidebar - adaptado para Django
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active de todos os itens
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                // Adiciona active no item clicado
+                this.classList.add('active');
+            });
+        });
+
+        // Marcar item ativo baseado na URL atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                if (item.getAttribute('href') === currentPath) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+
+        // Animação dos números das estatísticas
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            
+            statNumbers.forEach(element => {
+                const targetNumber = parseInt(element.getAttribute('data-target') || element.textContent);
+                let currentNumber = 0;
+                const increment = targetNumber / 30;
+                
+                const timer = setInterval(() => {
+                    currentNumber += increment;
+                    if (currentNumber >= targetNumber) {
+                        currentNumber = targetNumber;
+                        clearInterval(timer);
+                    }
+                    element.textContent = Math.floor(currentNumber);
+                }, 40);
+            });
+        }
+
+        // Executar animação quando carregar
+        window.addEventListener('load', animateStats);
+
+        // Função para atualizar dados via AJAX (opcional)
+        function updateDashboardData() {
+            fetch('{% url "dashboard_api" %}')
+                .then(response => response.json())
+                .then(data => {
+                    // Atualizar estatísticas
+                    document.querySelector('.stat-box.pendente .stat-number').setAttribute('data-target', data.stats.pending);
+                    document.querySelector('.stat-box.progresso .stat-number').setAttribute('data-target', data.stats.in_progress);
+                    document.querySelector('.stat-box.concluidas .stat-number').setAttribute('data-target', data.stats.completed);
+                    document.querySelector('.stat-box.atrasadas .stat-number').setAttribute('data-target', data.stats.overdue);
+                    
+                    // Reanimar números
+                    animateStats();
+                })
+                .catch(error => console.log('Erro ao atualizar dados:', error));
+        }
+
+        // Atualizar dados a cada 5 minutos (opcional)
+        setInterval(updateDashboardData, 300000);
+    </script>
+</body>
+</html>
+
+<!--Criar as URLs mencionadas (dashboard, tasks, reports, etc.)
+Passar os dados do contexto na view:
+
+pythoncontext = {
+    'stats': {'pending': 13, 'in_progress': 10, 'completed': 14, 'overdue': 14},
+    'leader': {'name': 'Clara Barbosa', 'completed_tasks': 27, 'points': 27},
+    'today_tasks': Task.objects.filter(due_date__date=today),
+    'overdue_tasks': Task.objects.filter(due_date__lt=now),
+    'user_points': request.user.profile.points
+} -->

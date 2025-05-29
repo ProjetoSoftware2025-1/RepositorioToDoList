@@ -1,5 +1,5 @@
-from django.shortcuts import render, reverse
-from django.views.generic import ListView, CreateView, FormView, UpdateView
+from django.shortcuts import render, reverse, get_object_or_404
+from django.views.generic import ListView, CreateView, FormView, UpdateView, RedirectView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import Task
@@ -30,4 +30,32 @@ class AtualizarTarefa(UpdateView):
 
     def get_success_url(self):
         return reverse('leaderboard:homepage')
+
+class ConcluirTarefa(LoginRequiredMixin, RedirectView):
+    pattern_name = 'leaderboard:homepage'
+
+    def get_object(self):
+        return get_object_or_404(Task, pk=self.kwargs['pk'])
+
+    def get(self, request, *args, **kwargs):
+        tarefa = self.get_object()
+        tarefa.concluido = True
+        tarefa.save()
+        return super().get(request, *args, **kwargs)
+
+
+class DesmarcarTarefa(LoginRequiredMixin, RedirectView):
+    pattern_name = 'leaderboard:homepage'
+
+    def get_object(self):  # Obtém a tarefa a ser manipulada pelo PK da URL
+        return get_object_or_404(Task, pk=self.kwargs['pk'])
+
+    def get(self, request, *args, **kwargs): # Este método é chamado para requisições GET (cliques em links)
+        tarefa = self.get_object()
+        tarefa.concluido = False
+        tarefa.save()
+        return super().get(request, *args, **kwargs)
+
+
+
 

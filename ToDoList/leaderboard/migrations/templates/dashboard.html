@@ -1,4 +1,4 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -358,23 +358,24 @@
         </div>
         
         <div class="nav-menu">
+            <!-- URLs nomeadas do Django - você precisa criar essas views e URLs -->
             <a href="{% url 'dashboard' %}" class="nav-item active">
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
-            <a href="{% url 'tasks' %}" class="nav-item">
+            <a href="{% url 'tasks:list' %}" class="nav-item">
                 <span>📋</span>
                 <span>Tarefas</span>
             </a>
-            <a href="{% url 'reports' %}" class="nav-item">
+            <a href="{% url 'reports:index' %}" class="nav-item">
                 <span>📈</span>
                 <span>Relatórios</span>
             </a>
-            <a href="{% url 'calendar' %}" class="nav-item">
+            <a href="{% url 'calendar:index' %}" class="nav-item">
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="{% url 'ranking' %}" class="nav-item">
+            <a href="{% url 'ranking:index' %}" class="nav-item">
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>
@@ -382,8 +383,14 @@
         
         <div class="user-section">
             <div class="user-item">
-                <div class="user-avatar-mini">{{ user.first_name.0|default:"U" }}</div>
-                <span>{{ user.username|default:"Usuário" }}</span>
+                <div class="user-avatar-mini">
+                    {% if user.first_name %}
+                        {{ user.first_name.0|upper }}
+                    {% else %}
+                        {{ user.username.0|upper }}
+                    {% endif %}
+                </div>
+                <span>{{ user.get_full_name|default:user.username }}</span>
             </div>
         </div>
     </div>
@@ -410,8 +417,21 @@
             <div class="leader-header">
                 <span class="crown">👑</span>
                 <div>
-                    <div class="leader-title">Líder da semana: {{ leader.name|default:"Nenhum líder" }}</div>
-                    <div class="leader-subtitle">{{ leader.completed_tasks|default:"0" }} tarefas concluídas e {{ leader.points|default:"0" }} pontos</div>
+                    <div class="leader-title">
+                        Líder da semana: 
+                        {% if leader %}
+                            {{ leader.get_full_name|default:leader.username }}
+                        {% else %}
+                            Nenhum líder
+                        {% endif %}
+                    </div>
+                    <div class="leader-subtitle">
+                        {% if leader %}
+                            {{ leader.completed_tasks|default:"0" }} tarefas concluídas e {{ leader.points|default:"0" }} pontos
+                        {% else %}
+                            Seja o primeiro líder da semana!
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             
@@ -444,10 +464,21 @@
                         <div class="task-header">
                             <div class="task-title">{{ task.title }}</div>
                             <div class="task-points">
-                                {% if task.points %}+ {{ task.points }} ponto{{ task.points|pluralize }}{% else %}Sem ponto{% endif %}
+                                {% if task.points %}
+                                    + {{ task.points }} ponto{{ task.points|pluralize }}
+                                {% else %}
+                                    Sem ponto
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="task-time">Prazo: {{ task.due_date|date:"d/m/Y H:i" }}</div>
+                        <div class="task-time">
+                            Prazo: 
+                            {% if task.due_date %}
+                                {{ task.due_date|date:"d/m/Y H:i" }}
+                            {% else %}
+                                Sem prazo definido
+                            {% endif %}
+                        </div>
                     </div>
                 {% empty %}
                     <div class="task-item">
@@ -468,7 +499,14 @@
                             <div class="task-title">{{ task.title }}</div>
                             <div class="task-points no-points">Sem ponto</div>
                         </div>
-                        <div class="task-time">Prazo: {{ task.due_date|date:"d/m/Y H:i" }}</div>
+                        <div class="task-time">
+                            Prazo: 
+                            {% if task.due_date %}
+                                {{ task.due_date|date:"d/m/Y H:i" }}
+                            {% else %}
+                                Sem prazo definido
+                            {% endif %}
+                        </div>
                     </div>
                 {% empty %}
                     <div class="task-item">
@@ -484,26 +522,19 @@
     </div>
 
     <script>
-        // Navegação da sidebar - adaptado para Django
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                // Remove active de todos os itens
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                // Adiciona active no item clicado
-                this.classList.add('active');
-            });
-        });
-
         // Marcar item ativo baseado na URL atual
         document.addEventListener('DOMContentLoaded', function() {
             const currentPath = window.location.pathname;
             const navItems = document.querySelectorAll('.nav-item');
             
             navItems.forEach(item => {
-                if (item.getAttribute('href') === currentPath) {
+                // Remove active de todos
+                item.classList.remove('active');
+                
+                // Adiciona active se a URL corresponder ao href
+                const itemHref = item.getAttribute('href');
+                if (itemHref && itemHref === currentPath) {
                     item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
                 }
             });
         });
@@ -513,9 +544,9 @@
             const statNumbers = document.querySelectorAll('.stat-number');
             
             statNumbers.forEach(element => {
-                const targetNumber = parseInt(element.getAttribute('data-target') || element.textContent);
+                const targetNumber = parseInt(element.getAttribute('data-target') || '0');
                 let currentNumber = 0;
-                const increment = targetNumber / 30;
+                const increment = Math.max(1, targetNumber / 30);
                 
                 const timer = setInterval(() => {
                     currentNumber += increment;
@@ -531,8 +562,10 @@
         // Executar animação quando carregar
         window.addEventListener('load', animateStats);
 
-        // Função para atualizar dados via AJAX (opcional)
+        // Função para atualizar dados via AJAX (quando você implementar a API)
         function updateDashboardData() {
+            // Descomente quando criar a view da API
+            /*
             fetch('{% url "dashboard_api" %}')
                 .then(response => response.json())
                 .then(data => {
@@ -546,21 +579,12 @@
                     animateStats();
                 })
                 .catch(error => console.log('Erro ao atualizar dados:', error));
+            */
         }
 
-        // Atualizar dados a cada 5 minutos (opcional)
-        setInterval(updateDashboardData, 300000);
+        // Atualização automática desabilitada por padrão
+        // Descomente quando implementar a API:
+        // setInterval(updateDashboardData, 300000); // 5 minutos
     </script>
 </body>
 </html>
-
-<!--Criar as URLs mencionadas (dashboard, tasks, reports, etc.)
-Passar os dados do contexto na view:
-
-pythoncontext = {
-    'stats': {'pending': 13, 'in_progress': 10, 'completed': 14, 'overdue': 14},
-    'leader': {'name': 'Clara Barbosa', 'completed_tasks': 27, 'points': 27},
-    'today_tasks': Task.objects.filter(due_date__date=today),
-    'overdue_tasks': Task.objects.filter(due_date__lt=now),
-    'user_points': request.user.profile.points
-} -->

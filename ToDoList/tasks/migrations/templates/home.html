@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinha no topo para não ficar no meio da tela se o conteúdo for grande */
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 25px;
+}
+
+/* Estilos do Campo de Entrada */
+.task-input {
+    display: flex;
+    margin-bottom: 25px;
+}
+
+.task-input input[type="text"] {
+    flex-grow: 1; /* Faz o input ocupar o espaço disponível */
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none; /* Remove a borda de foco padrão */
+}
+
+.task-input button {
+    background-color: #5cb85c; /* Verde para adicionar */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.task-input button:hover {
+    background-color: #4cae4c;
+}
+
+/* Estilos da Lista de Tarefas */
+#task-list {
+    list-style: none; /* Remove os marcadores de lista */
+    padding: 0;
+    margin: 0;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.task-item span {
+    flex-grow: 1;
+    text-align: left;
+    font-size: 18px;
+    color: #555;
+}
+
+.task-item button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.task-item .complete-btn {
+    background-color: #007bff; /* Azul para concluir */
+    color: white;
+}
+
+.task-item .complete-btn:hover {
+    background-color: #0056b3;
+}
+
+.task-item .delete-btn {
+    background-color: #dc3545; /* Vermelho para excluir */
+    color: white;
+}
+
+.task-item .delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Estilo para tarefas concluídas */
+.task-item.completed {
+    background-color: #e6ffe6; /* Um verde claro para tarefas concluídas */
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.task-item.completed span {
+    color: #777;
+}
+
+.task-item.completed .complete-btn {
+    background-color: #6c757d; /* Cinza para botão de concluído em tarefa já concluída */
+}
+
+.task-item.completed .complete-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Responsividade básica */
+@media (max-width: 480px) {
+    .task-input {
+        flex-direction: column;
+    }
+
+    .task-input button {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .task-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .task-item span {
+        margin-bottom: 10px;
+    }
+
+    .task-item button {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Meu Gerenciador de Tarefas</h1>
+
+
+        <ul id="task-list">
+            {% for tarefa in lista_tarefas_afazer %}
+            <li class="task-item">
+                <span>{{ tarefa.titulo }}</span>
+                <button class="complete-btn">Concluir</button>
+                <button class="delete-btn">Excluir</button>
+            </li>
+            {% endfor %}
+            {% for tarefa in lista_tarefas_concluidas %}
+            <li class="task-item completed">
+                <span>{{ tarefa.titulo }}</span>
+                <button class="complete-btn">Concluir</button>
+                <button class="delete-btn">Excluir</button>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

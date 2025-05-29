@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Tarefa</title>
+    <style>
+        /* Estilos Globais */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0f2f7; /* Um azul claro suave */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ocupa a altura total da viewport */
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Contêiner do Formulário */
+        form {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada */
+            width: 100%;
+            max-width: 500px; /* Largura máxima para o formulário */
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+
+        /* Estilo para cada campo do formulário (que {{ form }} renderiza automaticamente como <p> por padrão) */
+        form p {
+            margin-bottom: 20px; /* Espaço entre os campos */
+        }
+
+        form p label {
+            display: block; /* Cada label em sua própria linha */
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+            font-size: 1.1em;
+        }
+
+        form input[type="text"],
+        form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #b0c4de; /* Borda azul clara */
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box; /* Garante que padding e border não aumentem a largura */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            outline: none; /* Remove o outline padrão ao focar */
+        }
+
+        form textarea {
+            resize: vertical; /* Permite redimensionar apenas verticalmente */
+            min-height: 100px; /* Altura mínima para a textarea */
+        }
+
+        form input[type="text"]:focus,
+        form textarea:focus {
+            border-color: #3498db; /* Borda azul mais forte ao focar */
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3); /* Sombra de foco */
+        }
+
+        /* Estilo para o Checkbox (campo 'concluida') */
+        form p input[type="checkbox"] {
+            width: auto; /* Para não ocupar 100% da largura */
+            margin-right: 10px;
+            transform: scale(1.2); /* Aumenta o tamanho do checkbox */
+        }
+
+        /* Estilo para o Botão de Envio */
+        button[type="submit"] {
+            background-color: #28a745; /* Um verde vibrante */
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            width: 100%; /* Ocupa a largura total */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 25px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #218838; /* Verde mais escuro ao passar o mouse */
+            transform: translateY(-2px); /* Pequeno efeito de elevação */
+        }
+
+        /* Estilos para mensagens de erro (se houver, renderizadas pelo Django) */
+        .errorlist {
+            color: #dc3545; /* Vermelho para erros */
+            list-style-type: none;
+            padding: 0;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        .errorlist li {
+            margin-bottom: 3px;
+        }
+
+        /* Responsividade básica */
+        @media (max-width: 600px) {
+            form {
+                padding: 25px;
+                margin: 10px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            button[type="submit"] {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        <h1>Criar Nova Tarefa</h1> {# Adicionei um título ao formulário #}
+        {% csrf_token %}
+        {{ form }} {# Esta linha renderiza o formulário completo do Django #}
+        <button type="submit">Adicionar Tarefa</button> {# Alterei o texto do botão #}
+    </form>
+</body>
+</html>

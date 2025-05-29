@@ -16,5 +16,4 @@ Acompanhe o progresso no [Link](https://github.com//ProjetoSoftware2025-1/Reposi
 ## Como Contribuir  
 ### Estrutura de Branches  
 - `main`: Branch estável (somente merge via PR).  
-- `frontend`: Desenvolvimento do React.  
-- `backend`: Desenvolvimento do Django/API. 
+- `develop`: Desenvolvimento do Django.

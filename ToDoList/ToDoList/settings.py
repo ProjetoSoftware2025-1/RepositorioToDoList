@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     #do projeto ToDoList
     'tasks',
     'users',
+    'leaderboard',
 ]
 
 MIDDLEWARE = [

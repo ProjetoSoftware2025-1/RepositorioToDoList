@@ -6,4 +6,12 @@ class TarefaForm(forms.ModelForm):
         model = Task
         fields = ['titulo', 'descricao']
 
+class ConcluirTarefaForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields= ['completo']
+        widgets = {
+            'completo': forms.HiddenInput(),
+        }
+
 

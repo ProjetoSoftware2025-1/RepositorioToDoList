@@ -1,13 +1,14 @@
 from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_view
-from .views import CriarTarefa, AtualizarTarefa, ConcluirTarefa, DesmarcarTarefa
+from .views import CriarTarefa, AtualizarTarefa, ConcluirTarefa, ExcluirTarefa, ListarTarefa
 
 # url - view - template
 app_name = 'task'
 
 urlpatterns = [
+    path('listatarefas/', ListarTarefa.as_view(), name='listatarefas'),
     path('criartarefa/', CriarTarefa.as_view(), name='criartarefa'),
     path('atualizartarefa/<int:pk>', AtualizarTarefa.as_view(), name='atualizartarefa'),
-    path('concluir/<int:pk>', ConcluirTarefa.as_view(), name='concluir'),
-    path('desmarcar/<int:pk>', DesmarcarTarefa.as_view(), name='desmarcar'),
+    path('concluirtarefa/<int:pk>', ConcluirTarefa.as_view(), name='concluirtarefa'),
+    path('excluirtarefa/<int:pk>', ExcluirTarefa.as_view(), name='excluirtarefa'),
 ]

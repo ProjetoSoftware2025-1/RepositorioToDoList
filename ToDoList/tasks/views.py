@@ -1,12 +1,17 @@
-from django.shortcuts import render, reverse, get_object_or_404
-from django.views.generic import ListView, CreateView, FormView, UpdateView, RedirectView
+from django.shortcuts import render, reverse, get_object_or_404, redirect
+from django.views.generic import ListView, CreateView, FormView, UpdateView, RedirectView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import Task
-from .forms import TarefaForm
+from .forms import TarefaForm, ConcluirTarefaForm
+import logging
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 
+class ListarTarefa(ListView):
+    template_name = "listatarefas.html"
+    model = Task
 class CriarTarefa(LoginRequiredMixin, FormView):
     template_name = "criartarefa.html"
     form_class = TarefaForm
@@ -18,7 +23,7 @@ class CriarTarefa(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('leaderboard:homepage')
+        return reverse('task:listatarefas')
 
 class AtualizarTarefa(UpdateView):
     template_name = "atualizartarefa.html"
@@ -29,32 +34,30 @@ class AtualizarTarefa(UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('leaderboard:homepage')
+        return reverse('task:listatarefas')
 
-class ConcluirTarefa(LoginRequiredMixin, RedirectView):
-    pattern_name = 'leaderboard:homepage'
+class ExcluirTarefa(DeleteView):
+    template_name = "listatarefas.html"
+    model = Task
 
-    def get_object(self):
-        return get_object_or_404(Task, pk=self.kwargs['pk'])
+    def get_success_url(self):
+        return reverse('task:listatarefas')
 
-    def get(self, request, *args, **kwargs):
-        tarefa = self.get_object()
-        tarefa.concluido = True
-        tarefa.save()
-        return super().get(request, *args, **kwargs)
+class ConcluirTarefa(LoginRequiredMixin, UpdateView):
+    model = Task
+    form_class = ConcluirTarefaForm
+    template_name = "confirmarconclusao.html"
+    success_url = reverse_lazy("task:listatarefas")
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['completo'] = True
+        return initial
 
 
-class DesmarcarTarefa(LoginRequiredMixin, RedirectView):
-    pattern_name = 'leaderboard:homepage'
 
-    def get_object(self):  # Obtém a tarefa a ser manipulada pelo PK da URL
-        return get_object_or_404(Task, pk=self.kwargs['pk'])
 
-    def get(self, request, *args, **kwargs): # Este método é chamado para requisições GET (cliques em links)
-        tarefa = self.get_object()
-        tarefa.concluido = False
-        tarefa.save()
-        return super().get(request, *args, **kwargs)
+
 
 
 

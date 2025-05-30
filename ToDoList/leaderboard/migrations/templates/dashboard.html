@@ -359,23 +359,23 @@
         
         <div class="nav-menu">
             <!-- URLs nomeadas do Django - você precisa criar essas views e URLs -->
-            <a href="{% url 'dashboard' %}" class="nav-item active">
+            <a href="#" class="nav-item active">
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
-            <a href="{% url 'tasks:list' %}" class="nav-item">
+            <a href="#" class="nav-item">
                 <span>📋</span>
                 <span>Tarefas</span>
             </a>
-            <a href="{% url 'reports:index' %}" class="nav-item">
+            <a href="#" class="nav-item">
                 <span>📈</span>
                 <span>Relatórios</span>
             </a>
-            <a href="{% url 'calendar:index' %}" class="nav-item">
+            <a href="#" class="nav-item">
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="{% url 'ranking:index' %}" class="nav-item">
+            <a href="#" class="nav-item">
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>
@@ -459,10 +459,10 @@
         <div class="tasks-section">
             <div class="task-card">
                 <h3>Tarefas de Hoje</h3>
-                {% for task in today_tasks %}
+                {% for task in lista_tarefas_afazer %}
                     <div class="task-item">
                         <div class="task-header">
-                            <div class="task-title">{{ task.title }}</div>
+                            <div class="task-title">{{ task.titulo }}</div>
                             <div class="task-points">
                                 {% if task.points %}
                                     + {{ task.points }} ponto{{ task.points|pluralize }}
@@ -566,7 +566,7 @@
         function updateDashboardData() {
             // Descomente quando criar a view da API
             /*
-            fetch('{% url "dashboard_api" %}')
+            fetch('#')
                 .then(response => response.json())
                 .then(data => {
                     // Atualizar estatísticas

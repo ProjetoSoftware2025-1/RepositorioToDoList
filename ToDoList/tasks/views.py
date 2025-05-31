@@ -3,7 +3,7 @@ from django.views.generic import ListView, CreateView, FormView, UpdateView, Red
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import Task
-from .forms import TarefaForm, ConcluirTarefaForm
+from .forms import TarefaForm, ConcluirTarefaForm, CadastrarUsuario
 import logging
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
@@ -72,4 +72,18 @@ class Login(LoginView):
     
     def form_invalid(self, form):
         messages.error(self.request, 'Credenciais inválidas. Tente novamente.')
+        return super().form_invalid(form)
+
+class CadastroUsuario(FormView):
+    template_name = 'cadastro.html'
+    form_class = CadastrarUsuario
+    success_url = reverse_lazy('task:login')  # ou outro caminho de redirecionamento após cadastro
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'Cadastro realizado com sucesso! Faça login para continuar.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Por favor, corrija os erros abaixo.')
         return super().form_invalid(form)

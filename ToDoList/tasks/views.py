@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from .models import Task
 from .forms import TarefaForm, ConcluirTarefaForm, CadastrarUsuario
 import logging
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.contrib import messages
 
@@ -87,3 +87,10 @@ class CadastroUsuario(FormView):
     def form_invalid(self, form):
         messages.error(self.request, 'Por favor, corrija os erros abaixo.')
         return super().form_invalid(form)
+
+class SairView(LogoutView):
+    next_page = 'task:login'
+
+    def dispatch(self, request, *args, **kwargs):
+        messages.success(request, "Você saiu com sucesso!")
+        return super().dispatch(request, *args, **kwargs)

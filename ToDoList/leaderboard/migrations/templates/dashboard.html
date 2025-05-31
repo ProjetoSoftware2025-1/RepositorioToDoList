@@ -57,7 +57,27 @@
             display: block;
         }
 
-        .nav-item:hover {
+        .btn-sair{
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: block;
+            font-size: 1rem;
+            padding-left: 1.85rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        .span-btn{
+            margin-left: .5rem;
+        }
+
+        .nav-item:hover, .btn-sair:hover {
             background: #34495e;
             border-left-color: #3498db;
             text-decoration: none;
@@ -379,6 +399,7 @@
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>
+            <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
         
         <div class="user-section">
@@ -585,6 +606,22 @@
         // Atualização automática desabilitada por padrão
         // Descomente quando implementar a API:
         // setInterval(updateDashboardData, 300000); // 5 minutos
+
+
+        // Função de sair
+        function logout() {
+            fetch("{% url 'task:logout' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            });
+        }
     </script>
 </body>
 </html>

@@ -6,7 +6,13 @@ from django.contrib.auth.models import User
 class TarefaForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['titulo', 'descricao']
+        fields = ['titulo', 'descricao', 'data_vencimento', 'categoria']
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'form-input'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-input form-textarea', 'rows': 5}),
+            'data_vencimento': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input'}),
+            'categoria': forms.HiddenInput(),
+        }
 
 class ConcluirTarefaForm(forms.ModelForm):
     class Meta:

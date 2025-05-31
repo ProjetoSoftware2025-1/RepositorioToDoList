@@ -228,7 +228,7 @@
             gap: 30px;
         }
 
-        /* CUSTOM SELECT FOR TIPO */
+        /* CUSTOM SELECT FOR tipo */
         .select-container {
             position: relative;
         }
@@ -455,56 +455,73 @@
         <!-- FORM -->
         <div class="form-container">
             <h2 class="form-title">Crie nova tarefa</h2>
-            
-            <form method="post" action="{% url 'criar_tarefa' %}">
+
+            <form method="post" action="{% url 'task:criartarefa' %}">
                 {% csrf_token %}
-                
+
                 <!-- TÍTULO -->
                 <div class="form-group">
-                    <label class="form-label" for="titulo">Título:</label>
-                    <input type="text" id="titulo" name="titulo" class="form-input" required>
+                    <label class="form-label" for="{{ form.titulo.id_for_label}} ">Título:</label>
+                    {{ form.titulo }}
                 </div>
 
                 <!-- DESCRIÇÃO -->
                 <div class="form-group">
-                    <label class="form-label" for="descricao">Descrição:</label>
-                    <textarea id="descricao" name="descricao" class="form-input form-textarea" rows="5"></textarea>
+                    <label class="form-label" for="{{ form.descricao.id_for_label }}">Descrição:</label>
+                    {{ form.descricao }}
                 </div>
 
-                <!-- DATA DE VENCIMENTO E TIPO -->
+                <!-- DATA DE VENCIMENTO E tipo -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="data_vencimento">Data de Vencimento:</label>
-                        <input type="datetime-local" id="data_vencimento" name="data_vencimento" class="form-input" required>
+                        <label class="form-label" for="{{ form.data_vencimento.id_for_label }}">Data de Vencimento:</label>
+                        {{ form.data_vencimento }}
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Tipo:</label>
+                        <label class="form-label">Categoria:</label>
                         <div class="select-container">
                             <div class="custom-select" id="tipoSelect">
-                                <span id="selectedOption">Selecione o tipo</span>
+                                <span id="selectedOption">Selecione a Categoria</span>
                                 <span class="select-arrow">▼</span>
                             </div>
                             <div class="select-dropdown" id="tipoDropdown">
-                                <div class="select-option" data-value="pessoal">
+                                <div class="select-option" data-value="PESSOAL">
                                     <span class="option-icon">👤</span>
                                     <span>Pessoal</span>
                                 </div>
-                                <div class="select-option" data-value="estudos">
+                                <div class="select-option" data-value="ESTUDOS">
                                     <span class="option-icon">📚</span>
                                     <span>Estudos</span>
                                 </div>
-                                <div class="select-option" data-value="trabalho">
+                                <div class="select-option" data-value="TRABALHO">
                                     <span class="option-icon">💼</span>
                                     <span>Trabalho</span>
                                 </div>
                             </div>
-                            <input type="hidden" id="tipo" name="tipo" required>
+                            {{ form.categoria }}
                         </div>
                     </div>
                 </div>
 
-                <!-- BUTTONS -->
+    {% if form.errors %}
+                    <div style="color: red; margin-top: 20px;">
+                        <p>Houve um erro no seu formulário:</p>
+                        <ul>
+                            {% for field in form %}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
                 <div class="form-buttons">
                     <a href="{% url 'task:listatarefas' %}" class="btn btn-cancel">Cancelar</a>
                     <button type="submit" class="btn btn-save">Salvar Tarefa</button>
@@ -521,7 +538,7 @@
             const dropdown = document.getElementById('tipoDropdown');
             const selectedOption = document.getElementById('selectedOption');
             const selectArrow = document.querySelector('.select-arrow');
-            const hiddenInput = document.getElementById('tipo');
+            const hiddenInput = document.getElementById('id_categoria');
             const options = document.querySelectorAll('.select-option');
 
             // Toggle dropdown
@@ -583,7 +600,7 @@
         // Form validation
         document.querySelector('form').addEventListener('submit', function(e) {
             const titulo = document.getElementById('titulo').value.trim();
-            const tipo = document.getElementById('tipo').value;
+            const categoria = document.getElementById('id_categoria').value;
             const dataVencimento = document.getElementById('data_vencimento').value;
 
             if (!titulo) {
@@ -592,8 +609,8 @@
                 return;
             }
 
-            if (!tipo) {
-                alert('Por favor, selecione o tipo da tarefa.');
+            if (!categoria) {
+                alert('Por favor, selecione a categoria da tarefa.');
                 e.preventDefault();
                 return;
             }

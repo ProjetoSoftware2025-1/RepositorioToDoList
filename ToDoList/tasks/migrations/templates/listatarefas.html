@@ -442,7 +442,7 @@
 
         <!-- CREATE TASK BUTTON -->
         <div class="create-task-section">
-            <a href="{% url 'criar_tarefa' %}" class="create-task-btn">
+            <a href="{% url 'task:criartarefa' %}" class="create-task-btn">
                 <span>+</span>
                 Criar Nova Tarefa
             </a>
@@ -469,21 +469,22 @@
             <!-- TODAY'S TASKS -->
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas de Hoje</h2>
-                
-                <a href="{% url 'detalhe_tarefa' pk=1 %}" class="task-item today">
+                {% for tarefa in lista_tarefas_afazer %}
+                <a href="#" class="task-item today">
                     <div class="task-header">
-                        <div class="task-title">Finalizar relatório de vendas</div>
-                        <div class="task-category trabalho">Trabalho</div>
+                        <div class="task-title">{{ tarefa.titulo }}</div>
+                        <div class="task-category trabalho">{{ tarefa.categoria }}</div>
                     </div>
-                    <div class="task-time">Prazo: Hoje, 17:00</div>
+                    <div class="task-time">{{ tarefa.data_vencimento }}</div>
                 </a>
+                {% endfor %}
             </div>
 
             <!-- OVERDUE TASKS -->  
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas Atrasadas</h2>
                 
-                <a href="{% url 'detalhe_tarefa' pk=2 %}" class="task-item overdue">
+                <a href="{% url 'task:atualizartarefa' pk=2 %}" class="task-item overdue">
                     <div class="task-header">
                         <div class="task-title">Enviar relatório mensal</div>
                         <div class="task-category administrativo">Administrativo</div>
@@ -497,7 +498,7 @@
         <div class="full-width-section">
             <h2 class="section-title">Tarefas da Semana</h2>
             
-            <a href="{% url 'detalhe_tarefa' pk=3 %}" class="task-item weekly">
+            <a href="{% url 'task:atualizartarefa' pk=3 %}" class="task-item weekly">
                 <div class="task-header">
                     <div class="task-title">Apresentação para diretoria</div>
                     <div class="task-category trabalho">Trabalho</div>

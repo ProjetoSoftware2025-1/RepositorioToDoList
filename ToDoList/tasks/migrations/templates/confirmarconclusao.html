@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Conclusão da Tarefa</title>
+    <style>
+        /* Início do CSS incorporado */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .confirmation-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Espaço entre os elementos do formulário */
+        }
+
+        /* Esconde o campo oculto do formulário se ele for renderizado por `{{ form.as_p }}` */
+        form p {
+            margin: 0;
+        }
+
+        form p label {
+            display: none; /* Esconde o label do campo oculto */
+        }
+
+        form input[type="hidden"] {
+            display: none; /* Garante que o input oculto não apareça */
+        }
+
+        button[type="submit"] {
+            background-color: #28a745; /* Um verde para "Concluir" */
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            width: 100%; /* Ocupa a largura total */
+        }
+
+        button[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        a {
+            display: block; /* Para que o link ocupe sua própria linha */
+            text-decoration: none;
+            background-color: #6c757d; /* Cinza para cancelar */
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-top: 10px; /* Espaço entre o botão e o link */
+        }
+
+        a:hover {
+            background-color: #5a6268;
+        }
+
+        /* Responsividade básica */
+        @media (max-width: 480px) {
+            .confirmation-container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+        }
+        /* Fim do CSS incorporado */
+    </style>
+</head>
+<body>
+
+    <div class="confirmation-container">
+        <h1>Confirmar Conclusão</h1>
+        <p>Tem certeza que deseja marcar "{{ object.titulo }}" como concluída?</p>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Sim, Concluir</button>
+            <a href="{% url 'task:listatarefas' %}">Cancelar</a>
+        </form>
+    </div>
+
+</body>
+</html>

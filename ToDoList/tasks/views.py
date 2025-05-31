@@ -57,5 +57,6 @@ class DesmarcarTarefa(LoginRequiredMixin, RedirectView):
         return super().get(request, *args, **kwargs)
 
 
-
+class CadastrarUsuario(RedirectView):
+    template_name = 'login.html'
 

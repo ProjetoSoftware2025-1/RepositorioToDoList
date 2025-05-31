@@ -206,15 +206,15 @@
                     <div class="error-message">{{ form.password.errors.0 }}</div>
                 {% endif %}
                 
-                <div class="forgot-password">
+                {% comment %} <div class="forgot-password">
                    <a href="{% url 'password_reset' %}">Esqueceu a senha?</a>
-                </div>
+                </div> {% endcomment %}
                 
                 <button type="submit" class="login-button">LOGIN</button>
                 
-                <div class="register-link">
+                {% comment %} <div class="register-link">
                     Não tem uma conta? <a href="{% url 'cadastro' %}">Inscreva-se aqui</a>
-                </div>
+                </div> {% endcomment %}
             </form>
         </div>
     </div>

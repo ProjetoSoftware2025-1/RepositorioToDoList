@@ -136,3 +136,8 @@ STATICFILES_DIRS = [
 MEDIA_URL = "media/" #url das imagens media
 
 MEDIA_ROOT = BASE_DIR / "media" #onde as imagens media estarão no projeto
+
+# Login e logout
+
+LOGIN_REDIRECT_URL = 'leaderboard:homepage'  # Redirecionar para lista de tarefas após login
+LOGOUT_REDIRECT_URL = 'login'  # Redirecionar para página de login após logout

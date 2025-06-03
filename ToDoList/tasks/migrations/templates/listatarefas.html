@@ -383,7 +383,7 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>TASKLY</h2>
+            <a href="{% url 'leaderboard:homepage' %}" style="text-decoration: none"><h2>TASKLY</h2></a>
         </div>
         
         <div class="nav-menu">
@@ -451,15 +451,15 @@
         <!-- STATS BY STATUS -->
         <div class="stats-container">
             <div class="stat-box processo">
-                <div class="stat-number" data-target="12">0</div>
+                <div class="stat-number" data-target="{{ total_tarefas_afazer }}">0</div>
                 <div class="stat-label">Em Processo</div>
             </div>
             <div class="stat-box concluidas">
-                <div class="stat-number" data-target="10">0</div>
+                <div class="stat-number" data-target="{{ total_tarefas_concluidas }}">0</div>
                 <div class="stat-label">Concluídas</div>
             </div>
             <div class="stat-box atrasadas">
-                <div class="stat-number" data-target="14">0</div>
+                <div class="stat-number" data-target="{{ total_tarefas_atrasadas }}">0</div>
                 <div class="stat-label">Atrasadas</div>
             </div>
         </div>
@@ -469,7 +469,7 @@
             <!-- TODAY'S TASKS -->
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas de Hoje</h2>
-                {% for tarefa in lista_tarefas_afazer %}
+                {% for tarefa in lista_tarefas_do_dia %}
                 <a href="#" class="task-item today">
                     <div class="task-header">
                         <div class="task-title">{{ tarefa.titulo }}</div>
@@ -483,14 +483,15 @@
             <!-- OVERDUE TASKS -->  
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas Atrasadas</h2>
-                
-                <a href="{% url 'task:atualizartarefa' pk=2 %}" class="task-item overdue">
+                {% for task in lista_tarefas_atrasadas %}
+                <a href="#" class="task-item overdue">
                     <div class="task-header">
-                        <div class="task-title">Enviar relatório mensal</div>
-                        <div class="task-category administrativo">Administrativo</div>
+                        <div class="task-title">{{ task.titulo }}</div>
+                        <div class="task-category administrativo">{{ task.categoria }}</div>
                     </div>
-                    <div class="task-time">Prazo: Ontem, 16:00</div>
+                    <div class="task-time">Prazo: {{ task.data_vencimento }}</div>
                 </a>
+                {% endfor %}
             </div>
         </div>
 
@@ -510,15 +511,15 @@
         <!-- STATS BY TYPE -->
         <div class="stats-container" style="margin-top: 40px;">
             <div class="stat-box trabalho">
-                <div class="stat-number" data-target="12">0</div>
+                <div class="stat-number" data-target="{{ total_tarefas_trabalho }}">0</div>
                 <div class="stat-label">Trabalho</div>
             </div>
             <div class="stat-box administrativo">
-                <div class="stat-number" data-target="13">0</div>
-                <div class="stat-label">Administrativo</div>
+                <div class="stat-number" data-target="{{ total_tarefas_estudos }}">0</div>
+                <div class="stat-label">Estudos</div>
             </div>
             <div class="stat-box pessoal">
-                <div class="stat-number" data-target="3">0</div>
+                <div class="stat-number" data-target="{{ total_tarefas_pessoal }}">0</div>
                 <div class="stat-label">Pessoal</div>
             </div>
         </div>

@@ -374,12 +374,12 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>TASKLY</h2>
+            <a href="{% url 'leaderboard:homepage' %}" style="text-decoration: none"><h2>TASKLY</h2></a>
         </div>
         
         <div class="nav-menu">
             <!-- URLs nomeadas do Django - você precisa criar essas views e URLs -->
-            <a href="#" class="nav-item active">
+            <a href="{% url 'leaderboard:homepage' %}" class="nav-item active">
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
@@ -395,7 +395,7 @@
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>
@@ -458,7 +458,7 @@
             
             <div class="stats-container">
                 <div class="stat-box pendente">
-                    <div class="stat-number" data-target="{{ stats.pending|default:'0' }}">0</div>
+                    <div class="stat-number" data-target="{{ total_tarefas_afazer }}">0</div>
                     <div class="stat-label">Pendente</div>
                 </div>
                 <div class="stat-box progresso">
@@ -466,11 +466,11 @@
                     <div class="stat-label">Em Progresso</div>
                 </div>
                 <div class="stat-box concluidas">
-                    <div class="stat-number" data-target="{{ stats.completed|default:'0' }}">0</div>
+                    <div class="stat-number" data-target="{{ total_tarefas_concluidas }}">0</div>
                     <div class="stat-label">Concluídas</div>
                 </div>
                 <div class="stat-box atrasadas">
-                    <div class="stat-number" data-target="{{ stats.overdue|default:'0' }}">0</div>
+                    <div class="stat-number" data-target="{{ total_tarefas_atrasadas }}">0</div>
                     <div class="stat-label">Atrasadas</div>
                 </div>
             </div>
@@ -480,7 +480,7 @@
         <div class="tasks-section">
             <div class="task-card">
                 <h3>Tarefas de Hoje</h3>
-                {% for task in lista_tarefas_afazer %}
+                {% for task in lista_tarefas_do_dia %}
                     <div class="task-item">
                         <div class="task-header">
                             <div class="task-title">{{ task.titulo }}</div>
@@ -494,8 +494,8 @@
                         </div>
                         <div class="task-time">
                             Prazo: 
-                            {% if task.due_date %}
-                                {{ task.due_date|date:"d/m/Y H:i" }}
+                            {% if task.data_vencimento %}
+                                {{ task.data_vencimento }}
                             {% else %}
                                 Sem prazo definido
                             {% endif %}
@@ -514,16 +514,16 @@
 
             <div class="task-card">
                 <h3>Tarefas Atrasadas</h3>
-                {% for task in overdue_tasks %}
+                {% for task in lista_tarefas_atrasadas %}
                     <div class="task-item overdue">
                         <div class="task-header">
-                            <div class="task-title">{{ task.title }}</div>
+                            <div class="task-title">{{ task.titulo }}</div>
                             <div class="task-points no-points">Sem ponto</div>
                         </div>
                         <div class="task-time">
                             Prazo: 
-                            {% if task.due_date %}
-                                {{ task.due_date|date:"d/m/Y H:i" }}
+                            {% if task.data_vencimento %}
+                                {{ task.data_vencimento }}
                             {% else %}
                                 Sem prazo definido
                             {% endif %}

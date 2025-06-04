@@ -69,6 +69,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'tasks.novos_context.lista_tarefas_afazer',
                 'tasks.novos_context.lista_tarefas_concluidas',
+                'tasks.novos_context.lista_tarefas_atrasadas',
+                'tasks.novos_context.lista_tarefas_do_dia',
+                'tasks.novos_context.total_tarefas',
             ],
         },
     },
@@ -110,9 +113,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 

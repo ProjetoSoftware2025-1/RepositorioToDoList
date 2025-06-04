@@ -355,27 +355,28 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>TASKLY</h2>
+            <a href="{% url 'leaderboard:homepage' %}" style="text-decoration: none"><h2>TASKLY</h2></a>
         </div>
         
         <div class="nav-menu">
-            <a href="{% url 'dashboard' %}" class="nav-item">
+            <!-- URLs nomeadas do Django - você precisa criar essas views e URLs -->
+            <a href="{% url 'leaderboard:homepage' %}" class="nav-item active">
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
-            <a href="{% url 'tasks' %}" class="nav-item">
+            <a href="{% url 'task:listatarefas' %}" class="nav-item">
                 <span>📋</span>
                 <span>Tarefas</span>
             </a>
-            <a href="{% url 'reports' %}" class="nav-item">
+            <a href="#" class="nav-item">
                 <span>📈</span>
                 <span>Relatórios</span>
             </a>
-            <a href="{% url 'calendar' %}" class="nav-item">
+            <a href="#" class="nav-item">
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="{% url 'ranking' %}" class="nav-item active">
+            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>
@@ -473,22 +474,7 @@
             });
         });
 
-        // Função para atualizar ranking via AJAX (opcional)
-        function updateRanking() {
-            fetch('{% url "ranking_api" %}')
-                .then(response => response.json())
-                .then(data => {
-                    // Atualizar tabela de ranking
-                    const tbody = document.querySelector('.ranking-table tbody');
-                    tbody.innerHTML = '';
-                    
-                    data.ranking_users.forEach((user, index) => {
-                        const row = createRankingRow(user, index + 1);
-                        tbody.appendChild(row);
-                    });
-                })
-                .catch(error => console.log('Erro ao atualizar ranking:', error));
-        }
+
 
         function createRankingRow(user, position) {
             const row = document.createElement('tr');

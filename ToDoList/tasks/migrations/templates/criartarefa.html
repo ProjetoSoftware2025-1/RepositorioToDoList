@@ -401,7 +401,7 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>TASKLY</h2>
+            <a href="{% url 'leaderboard:homepage' %}" style="text-decoration: none"><h2>TASKLY</h2></a>
         </div>
         
         <div class="nav-menu">
@@ -429,8 +429,14 @@
         
         <div class="user-section">
             <div class="user-item">
-                <div class="user-avatar-mini">U</div>
-                <span>Usuário</span>
+                <div class="user-avatar-mini">
+                    {% if user.first_name %}
+                        {{ user.first_name.0|upper }}
+                    {% else %}
+                        {{ user.username.0|upper }}
+                    {% endif %}
+                </div>
+                <span>{{ user.get_full_name|default:user.username }}</span>
             </div>
         </div>
     </div>
@@ -446,7 +452,7 @@
             <div class="header-right">
                 <div class="user-avatar">0</div>
                 <div class="user-info">
-                    <h3>Usuário</h3>
+                    <h3>{{ user.username }}</h3>
                     <div class="user-points">Pontuação: 0</div>
                 </div>
             </div>

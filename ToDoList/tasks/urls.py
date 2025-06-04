@@ -13,6 +13,6 @@ urlpatterns = [
     path('concluirtarefa/<int:pk>', ConcluirTarefa.as_view(), name='concluirtarefa'),
     path('excluirtarefa/<int:pk>', ExcluirTarefa.as_view(), name='excluirtarefa'),
     path('cadastro/', CadastroUsuario.as_view(), name='cadastro'),
-     path('logout/', SairView.as_view(next_page='task:login'), name='logout'),
+    path('logout/', SairView.as_view(next_page='task:login'), name='logout'),
     # path('password-reset/', auth_view.PasswordResetView.as_view(template_name='registration/password_reset.html'), name='password_reset'),
 ]

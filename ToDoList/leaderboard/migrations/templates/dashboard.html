@@ -379,7 +379,7 @@
         
         <div class="nav-menu">
             <!-- URLs nomeadas do Django - você precisa criar essas views e URLs -->
-            <a href="#" class="nav-item active">
+            <a href="{% url 'leaderboard:homepage' %}" class="nav-item active">
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
@@ -395,7 +395,7 @@
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>

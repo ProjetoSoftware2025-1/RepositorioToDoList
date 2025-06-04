@@ -498,14 +498,15 @@
         <!-- WEEKLY TASKS -->
         <div class="full-width-section">
             <h2 class="section-title">Tarefas da Semana</h2>
-            
-            <a href="{% url 'task:atualizartarefa' pk=3 %}" class="task-item weekly">
+            {% for task in lista_tarefas_afazer %}
+            <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item weekly">
                 <div class="task-header">
-                    <div class="task-title">Apresentação para diretoria</div>
-                    <div class="task-category trabalho">Trabalho</div>
+                    <div class="task-title">{{ task.titulo }}</div>
+                    <div class="task-category trabalho">{{ task.categoria }}</div>
                 </div>
-                <div class="task-time">Prazo: Amanhã, 15:00</div>
+                <div class="task-time">{{ task.data_vencimento }}</div>
             </a>
+            {% endfor %}
         </div>
 
         <!-- STATS BY TYPE -->

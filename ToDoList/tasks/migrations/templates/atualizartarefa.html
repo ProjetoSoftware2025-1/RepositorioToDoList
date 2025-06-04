@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Tarefa</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Seu CSS personalizado aqui, como o do exemplo anterior */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0f2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+
+        form p {
+            margin-bottom: 20px;
+        }
+
+        form p label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+            font-size: 1.1em;
+        }
+
+        form input[type="text"],
+        form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #b0c4de;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            outline: none;
+        }
+
+        form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        form input[type="text"]:focus,
+        form textarea:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+        }
+
+        form p input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        /* Ajuste específico para o checkbox, se estiver usando {{ form }} diretamente */
+        form p:has(input[type="checkbox"]) label {
+            display: inline-block; /* Para que o label fique ao lado do checkbox */
+            margin-left: 5px; /* Espaço entre o checkbox e o label */
+            font-weight: normal; /* Geralmente o label do checkbox não é negrito */
+            font-size: 1em;
+            vertical-align: middle; /* Alinha verticalmente com o checkbox */
+        }
+
+
+        button[type="submit"], .btn-secondary {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 25px;
+        }
+
+        button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+
+        .errorlist {
+            color: #dc3545;
+            list-style-type: none;
+            padding: 0;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        .errorlist li {
+            margin-bottom: 3px;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                padding: 25px;
+                margin: 10px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            button[type="submit"], .btn-secondary {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        <h1>Editar Tarefa</h1>
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Salvar Alterações</button>
+    </form>
+</body>
+</html>

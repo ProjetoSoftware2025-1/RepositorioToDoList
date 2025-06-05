@@ -42,6 +42,27 @@
             color: #ecf0f1;
         }
 
+        .btn-sair{
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: block;
+            font-size: 1rem;
+            padding-left: 1.85rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        .span-btn{
+            margin-left: .5rem;
+        }
+
+
         .nav-menu {
             padding: 20px 0;
         }
@@ -383,15 +404,16 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>TASKLY</h2>
+            <a href="{% url 'leaderboard:homepage' %}" style="text-decoration: none"><h2>TASKLY</h2></a>
         </div>
         
         <div class="nav-menu">
-            <a href="#" class="nav-item">
+            <!-- URLs nomeadas do Django - você precisa criar essas views e URLs -->
+            <a href="{% url 'leaderboard:homepage' %}" class="nav-item active">
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
-            <a href="{% url 'task:listatarefas' %}" class="nav-item active">
+            <a href="{% url 'task:listatarefas' %}" class="nav-item">
                 <span>📋</span>
                 <span>Tarefas</span>
             </a>
@@ -403,11 +425,26 @@
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>
+            <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
+        
+        <div class="user-section">
+            <div class="user-item">
+                <div class="user-avatar-mini">
+                    {% if user.first_name %}
+                        {{ user.first_name.0|upper }}
+                    {% else %}
+                        {{ user.username.0|upper }}
+                    {% endif %}
+                </div>
+                <span>{{ user.get_full_name|default:user.username }}</span>
+            </div>
+        </div>
+    </div>
         
         <div class="user-section">
             <div class="user-item">
@@ -451,15 +488,15 @@
         <!-- STATS BY STATUS -->
         <div class="stats-container">
             <div class="stat-box processo">
-                <div class="stat-number" data-target="12">0</div>
+                <div class="stat-number" data-target="{{ total_tarefas_afazer }}">0</div>
                 <div class="stat-label">Em Processo</div>
             </div>
             <div class="stat-box concluidas">
-                <div class="stat-number" data-target="10">0</div>
+                <div class="stat-number" data-target="{{ total_tarefas_concluidas }}">0</div>
                 <div class="stat-label">Concluídas</div>
             </div>
             <div class="stat-box atrasadas">
-                <div class="stat-number" data-target="14">0</div>
+                <div class="stat-number" data-target="{{ total_tarefas_atrasadas }}">0</div>
                 <div class="stat-label">Atrasadas</div>
             </div>
         </div>
@@ -469,7 +506,7 @@
             <!-- TODAY'S TASKS -->
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas de Hoje</h2>
-                {% for tarefa in lista_tarefas_afazer %}
+                {% for tarefa in lista_tarefas_do_dia %}
                 <a href="#" class="task-item today">
                     <div class="task-header">
                         <div class="task-title">{{ tarefa.titulo }}</div>
@@ -483,42 +520,44 @@
             <!-- OVERDUE TASKS -->  
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas Atrasadas</h2>
-                
-                <a href="{% url 'task:atualizartarefa' pk=2 %}" class="task-item overdue">
+                {% for task in lista_tarefas_atrasadas %}
+                <a href="#" class="task-item overdue">
                     <div class="task-header">
-                        <div class="task-title">Enviar relatório mensal</div>
-                        <div class="task-category administrativo">Administrativo</div>
+                        <div class="task-title">{{ task.titulo }}</div>
+                        <div class="task-category administrativo">{{ task.categoria }}</div>
                     </div>
-                    <div class="task-time">Prazo: Ontem, 16:00</div>
+                    <div class="task-time">Prazo: {{ task.data_vencimento }}</div>
                 </a>
+                {% endfor %}
             </div>
         </div>
 
         <!-- WEEKLY TASKS -->
         <div class="full-width-section">
             <h2 class="section-title">Tarefas da Semana</h2>
-            
-            <a href="{% url 'task:atualizartarefa' pk=3 %}" class="task-item weekly">
+            {% for task in lista_tarefas_afazer %}
+            <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item weekly">
                 <div class="task-header">
-                    <div class="task-title">Apresentação para diretoria</div>
-                    <div class="task-category trabalho">Trabalho</div>
+                    <div class="task-title">{{ task.titulo }}</div>
+                    <div class="task-category trabalho">{{ task.categoria }}</div>
                 </div>
-                <div class="task-time">Prazo: Amanhã, 15:00</div>
+                <div class="task-time">{{ task.data_vencimento }}</div>
             </a>
+            {% endfor %}
         </div>
 
         <!-- STATS BY TYPE -->
         <div class="stats-container" style="margin-top: 40px;">
             <div class="stat-box trabalho">
-                <div class="stat-number" data-target="12">0</div>
+                <div class="stat-number" data-target="{{ total_tarefas_trabalho }}">0</div>
                 <div class="stat-label">Trabalho</div>
             </div>
             <div class="stat-box administrativo">
-                <div class="stat-number" data-target="13">0</div>
-                <div class="stat-label">Administrativo</div>
+                <div class="stat-number" data-target="{{ total_tarefas_estudos }}">0</div>
+                <div class="stat-label">Estudos</div>
             </div>
             <div class="stat-box pessoal">
-                <div class="stat-number" data-target="3">0</div>
+                <div class="stat-number" data-target="{{ total_tarefas_pessoal }}">0</div>
                 <div class="stat-label">Pessoal</div>
             </div>
         </div>
@@ -538,6 +577,20 @@
                 }
             });
         });
+        // Função para sair
+        function logout() {
+            fetch("{% url 'task:logout' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            });
+        }
 
         // Animação dos números das estatísticas
         function animateStats() {

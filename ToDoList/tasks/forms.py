@@ -10,7 +10,7 @@ class TarefaForm(forms.ModelForm):
         widgets = {
             'titulo': forms.TextInput(attrs={'class': 'form-input'}),
             'descricao': forms.Textarea(attrs={'class': 'form-input form-textarea', 'rows': 5}),
-            'data_vencimento': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input'}),
+            'data_vencimento': forms.DateInput(attrs={'type': 'date', 'class': 'form-input'}),
             'categoria': forms.HiddenInput(),
         }
 

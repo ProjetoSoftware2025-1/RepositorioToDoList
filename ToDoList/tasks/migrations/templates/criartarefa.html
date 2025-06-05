@@ -73,6 +73,26 @@
             font-size: 14px;
         }
 
+        .btn-sair{
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: block;
+            font-size: 1rem;
+            padding-left: 1.85rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        .span-btn{
+            margin-left: .5rem;
+        }
+
         .user-section {
             position: absolute;
             bottom: 20px;
@@ -401,11 +421,11 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>TASKLY</h2>
+            <a href="{% url 'leaderboard:homepage' %}" style="text-decoration: none"><h2>TASKLY</h2></a>
         </div>
         
         <div class="nav-menu">
-            <a href="#" class="nav-item">
+            <a href="{% url 'leaderboard:homepage' %}" class="nav-item">
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
@@ -421,16 +441,24 @@
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>
+
+            <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
         
         <div class="user-section">
             <div class="user-item">
-                <div class="user-avatar-mini">U</div>
-                <span>Usuário</span>
+                <div class="user-avatar-mini">
+                    {% if user.first_name %}
+                        {{ user.first_name.0|upper }}
+                    {% else %}
+                        {{ user.username.0|upper }}
+                    {% endif %}
+                </div>
+                <span>{{ user.get_full_name|default:user.username }}</span>
             </div>
         </div>
     </div>
@@ -446,7 +474,7 @@
             <div class="header-right">
                 <div class="user-avatar">0</div>
                 <div class="user-info">
-                    <h3>Usuário</h3>
+                    <h3>{{ user.username }}</h3>
                     <div class="user-points">Pontuação: 0</div>
                 </div>
             </div>
@@ -531,6 +559,21 @@
     </div>
 
     <script>
+
+        // Função para sair
+        function logout() {
+            fetch("{% url 'task:logout' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            });
+        }
         // Custom Select Functionality
         document.addEventListener('DOMContentLoaded', function() {
             const selectContainer = document.querySelector('.select-container');

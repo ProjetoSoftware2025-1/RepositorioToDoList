@@ -42,6 +42,26 @@
             color: #ecf0f1;
         }
 
+        .btn-sair{
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: block;
+            font-size: 1rem;
+            padding-left: 1.85rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        .span-btn{
+            margin-left: .5rem;
+        }
+
         .nav-menu {
             padding: 20px 0;
         }
@@ -355,30 +375,33 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>TASKLY</h2>
+            <a href="{% url 'leaderboard:homepage' %}" style="text-decoration: none"><h2>TASKLY</h2></a>
         </div>
         
         <div class="nav-menu">
-            <a href="{% url 'dashboard' %}" class="nav-item">
+            <!-- URLs nomeadas do Django - você precisa criar essas views e URLs -->
+            <a href="{% url 'leaderboard:homepage' %}" class="nav-item active">
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
-            <a href="{% url 'tasks' %}" class="nav-item">
+            <a href="{% url 'task:listatarefas' %}" class="nav-item">
                 <span>📋</span>
                 <span>Tarefas</span>
             </a>
-            <a href="{% url 'reports' %}" class="nav-item">
+            <a href="#" class="nav-item">
                 <span>📈</span>
                 <span>Relatórios</span>
             </a>
-            <a href="{% url 'calendar' %}" class="nav-item">
+            <a href="#" class="nav-item">
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="{% url 'ranking' %}" class="nav-item active">
+            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>
+
+            <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
         
         <div class="user-section">
@@ -451,6 +474,21 @@
     </div>
 
     <script>
+
+        // Função para sair
+        function logout() {
+            fetch("{% url 'task:logout' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            });
+        }
         // Navegação da sidebar
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function() {
@@ -473,22 +511,7 @@
             });
         });
 
-        // Função para atualizar ranking via AJAX (opcional)
-        function updateRanking() {
-            fetch('{% url "ranking_api" %}')
-                .then(response => response.json())
-                .then(data => {
-                    // Atualizar tabela de ranking
-                    const tbody = document.querySelector('.ranking-table tbody');
-                    tbody.innerHTML = '';
-                    
-                    data.ranking_users.forEach((user, index) => {
-                        const row = createRankingRow(user, index + 1);
-                        tbody.appendChild(row);
-                    });
-                })
-                .catch(error => console.log('Erro ao atualizar ranking:', error));
-        }
+
 
         function createRankingRow(user, position) {
             const row = document.createElement('tr');

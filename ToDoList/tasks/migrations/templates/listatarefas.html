@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly - Tarefas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            background: #2c3e50;
+            color: white;
+            padding: 0;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: #34495e;
+            border-bottom: 1px solid #4a5f7a;
+        }
+
+        .sidebar-header h2 {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+
+        .btn-sair{
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: block;
+            font-size: 1rem;
+            padding-left: 1.85rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        .span-btn{
+            margin-left: .5rem;
+        }
+
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .nav-item:hover {
+            background: #34495e;
+            border-left-color: #3498db;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #3498db;
+            border-left-color: #2980b9;
+        }
+
+        .nav-item span {
+            margin-left: 10px;
+            font-size: 14px;
+        }
+
+        .user-section {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #34495e;
+            border-radius: 8px;
+        }
+
+        .user-avatar-mini {
+            width: 30px;
+            height: 30px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 220px;
+            flex: 1;
+            padding: 30px 40px;
+            max-width: calc(100vw - 220px);
+        }
+
+        /* HEADER */
+        .page-header {
+            background: white;
+            padding: 25px 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .tasks-tag {
+            background: #27ae60;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px 25px;
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 15px;
+        }
+
+        .user-info h3 {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .user-points {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* CREATE TASK BUTTON */
+        .create-task-section {
+            margin-bottom: 30px;
+        }
+
+        .create-task-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 18px 35px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .create-task-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .create-task-btn span {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        /* STATS GRID */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 12px;
+            text-align: center;
+            border-top: 4px solid;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-box.processo { border-top-color: #f39c12; }
+        .stat-box.concluidas { border-top-color: #27ae60; }
+        .stat-box.atrasadas { border-top-color: #e74c3c; }
+        .stat-box.trabalho { border-top-color: #3498db; }
+        .stat-box.administrativo { border-top-color: #9b59b6; }
+        .stat-box.pessoal { border-top-color: #1abc9c; }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        /* TASKS SECTIONS */
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+            display: inline-block;
+        }
+
+        .tasks-column {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .task-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .task-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .task-item.today { border-left-color: #3498db; }
+        .task-item.overdue { 
+            border-left-color: #e74c3c; 
+            background: #fff5f5;
+        }
+        .task-item.weekly { border-left-color: #f39c12; }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .task-title {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 1.3;
+        }
+
+        .task-category {
+            background: #27ae60;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .task-category.trabalho { background: #3498db; }
+        .task-category.administrativo { background: #e74c3c; }
+        .task-category.pessoal { background: #f39c12; }
+
+        .task-time {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        /* FULL WIDTH SECTION */
+        .full-width-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .tasks-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                min-height: auto;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 20px;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .tasks-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="{% url 'leaderboard:homepage' %}" style="text-decoration: none"><h2>TASKLY</h2></a>
+        </div>
+        
+        <div class="nav-menu">
+            <!-- URLs nomeadas do Django - você precisa criar essas views e URLs -->
+            <a href="{% url 'leaderboard:homepage' %}" class="nav-item active">
+                <span>📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'task:listatarefas' %}" class="nav-item">
+                <span>📋</span>
+                <span>Tarefas</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span>📈</span>
+                <span>Relatórios</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span>📅</span>
+                <span>Calendário</span>
+            </a>
+            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
+                <span>🏆</span>
+                <span>Ranking</span>
+            </a>
+            <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
+        </div>
+        
+        <div class="user-section">
+            <div class="user-item">
+                <div class="user-avatar-mini">
+                    {% if user.first_name %}
+                        {{ user.first_name.0|upper }}
+                    {% else %}
+                        {{ user.username.0|upper }}
+                    {% endif %}
+                </div>
+                <span>{{ user.get_full_name|default:user.username }}</span>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <div class="page-header">
+            <div class="header-left">
+                <h1>Gerenciamento de Tarefas</h1>
+                <span class="tasks-tag">Lista de Tarefas</span>
+            </div>
+            <div class="header-right">
+                <div class="user-avatar">{{ user_points|default:"0" }}</div>
+                <div class="user-info">
+                    <h3>{{ user.get_full_name|default:user.username }}</h3>
+                    <div class="user-points">Pontuação: {{ user_points|default:"0" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CREATE TASK BUTTON -->
+        <div class="create-task-section">
+            <a href="{% url 'task:criartarefa' %}" class="create-task-btn">
+                <span>+</span>
+                Criar Nova Tarefa
+            </a>
+        </div>
+
+        <!-- STATS BY STATUS -->
+        <div class="stats-container">
+            <div class="stat-box processo">
+                <div class="stat-number" data-target="{{ total_tarefas_afazer }}">0</div>
+                <div class="stat-label">Em Processo</div>
+            </div>
+            <div class="stat-box concluidas">
+                <div class="stat-number" data-target="{{ total_tarefas_concluidas }}">0</div>
+                <div class="stat-label">Concluídas</div>
+            </div>
+            <div class="stat-box atrasadas">
+                <div class="stat-number" data-target="{{ total_tarefas_atrasadas }}">0</div>
+                <div class="stat-label">Atrasadas</div>
+            </div>
+        </div>
+
+        <!-- TASKS GRID -->
+        <div class="tasks-grid">
+            <!-- TODAY'S TASKS -->
+            <div class="tasks-column">
+                <h2 class="section-title">Tarefas de Hoje</h2>
+                {% for tarefa in lista_tarefas_do_dia %}
+                <a href="#" class="task-item today">
+                    <div class="task-header">
+                        <div class="task-title">{{ tarefa.titulo }}</div>
+                        <div class="task-category trabalho">{{ tarefa.categoria }}</div>
+                    </div>
+                    <div class="task-time">{{ tarefa.data_vencimento }}</div>
+                </a>
+                {% endfor %}
+            </div>
+
+            <!-- OVERDUE TASKS -->  
+            <div class="tasks-column">
+                <h2 class="section-title">Tarefas Atrasadas</h2>
+                {% for task in lista_tarefas_atrasadas %}
+                <a href="#" class="task-item overdue">
+                    <div class="task-header">
+                        <div class="task-title">{{ task.titulo }}</div>
+                        <div class="task-category administrativo">{{ task.categoria }}</div>
+                    </div>
+                    <div class="task-time">Prazo: {{ task.data_vencimento }}</div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- WEEKLY TASKS -->
+        <div class="full-width-section">
+            <h2 class="section-title">Tarefas da Semana</h2>
+            {% for task in lista_tarefas_afazer %}
+            <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item weekly">
+                <div class="task-header">
+                    <div class="task-title">{{ task.titulo }}</div>
+                    <div class="task-category trabalho">{{ task.categoria }}</div>
+                </div>
+                <div class="task-time">{{ task.data_vencimento }}</div>
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- STATS BY TYPE -->
+        <div class="stats-container" style="margin-top: 40px;">
+            <div class="stat-box trabalho">
+                <div class="stat-number" data-target="{{ total_tarefas_trabalho }}">0</div>
+                <div class="stat-label">Trabalho</div>
+            </div>
+            <div class="stat-box administrativo">
+                <div class="stat-number" data-target="{{ total_tarefas_estudos }}">0</div>
+                <div class="stat-label">Estudos</div>
+            </div>
+            <div class="stat-box pessoal">
+                <div class="stat-number" data-target="{{ total_tarefas_pessoal }}">0</div>
+                <div class="stat-label">Pessoal</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Marcar item ativo baseado na URL atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                const itemHref = item.getAttribute('href');
+                if (itemHref && itemHref === currentPath) {
+                    item.classList.add('active');
+                }
+            });
+        });
+        // Função para sair
+        function logout() {
+            fetch("{% url 'task:logout' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            });
+        }
+
+        // Animação dos números das estatísticas
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            
+            statNumbers.forEach(element => {
+                const targetNumber = parseInt(element.getAttribute('data-target') || '0');
+                let currentNumber = 0;
+                const increment = Math.max(1, targetNumber / 30);
+                
+                const timer = setInterval(() => {
+                    currentNumber += increment;
+                    if (currentNumber >= targetNumber) {
+                        currentNumber = targetNumber;
+                        clearInterval(timer);
+                    }
+                    element.textContent = Math.floor(currentNumber);
+                }, 40);
+            });
+        }
+
+        // Executar animação quando carregar
+        window.addEventListener('load', animateStats);
+
+        // Adicionar efeito de ripple nos botões de tarefa
+        document.querySelectorAll('.task-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(52, 152, 219, 0.3)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s linear';
+                ripple.style.left = (e.clientX - item.offsetLeft) + 'px';
+                ripple.style.top = (e.clientY - item.offsetTop) + 'px';
+                ripple.style.width = ripple.style.height = '20px';
+                
+                item.style.position = 'relative';
+                item.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Adicionar CSS da animação ripple
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

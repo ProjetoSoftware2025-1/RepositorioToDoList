@@ -22,6 +22,5 @@ Acompanhe o progresso no [Link](https://github.com//ProjetoSoftware2025-1/Reposi
 ### Estrutura de Branches  
 
 - `main`: Branch estável (somente merge via PR).  
-<<<<<<< HEAD
 - `develop`: Desenvolvimento do projeto.
 =======

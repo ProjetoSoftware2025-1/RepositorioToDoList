@@ -8,15 +8,65 @@ import logging
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.contrib import messages
+from datetime import date
+from django.db.models import Q
+from django.views.generic import TemplateView
 
 
 logger = logging.getLogger(__name__)
 
 # Create your views here.
 
-class ListarTarefa(ListView):
+class ListarTarefa(LoginRequiredMixin, TemplateView):
     template_name = "listatarefas.html"
-    model = Task
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        hoje = date.today()
+
+        # Todas as tarefas do usuário
+        todas_tarefas = Task.objects.filter(user=user)
+
+        # Listas fixas
+        context['lista_tarefas_do_dia'] = todas_tarefas.filter(data_vencimento=hoje)
+        context['lista_tarefas_atrasadas'] = todas_tarefas.filter(data_vencimento__lt=hoje, completo=False)
+        context['lista_tarefas_afazer'] = todas_tarefas.filter(completo=False)
+
+        # Totais por categoria
+        context['total_tarefas_afazer'] = todas_tarefas.filter(completo=False).count()
+        context['total_tarefas_concluidas'] = todas_tarefas.filter(completo=True).count()
+        context['total_tarefas_atrasadas'] = todas_tarefas.filter(data_vencimento__lt=hoje, completo=False).count()
+        context['total_tarefas_trabalho'] = todas_tarefas.filter(categoria='TRABALHO').count()
+        context['total_tarefas_estudos'] = todas_tarefas.filter(categoria='ESTUDOS').count()
+        context['total_tarefas_pessoal'] = todas_tarefas.filter(categoria='PESSOAL').count()
+
+        # Agora: só processa o filtro SE houver parâmetros de filtro
+        data = self.request.GET.get('data')
+        status = self.request.GET.get('status')
+        categoria = self.request.GET.get('categoria')
+
+        if data or status or categoria:
+            tarefas_filtradas = todas_tarefas
+
+            if data:
+                tarefas_filtradas = tarefas_filtradas.filter(data_vencimento=data)
+
+            if status == 'pendente':
+                tarefas_filtradas = tarefas_filtradas.filter(completo=False)
+            elif status == 'concluida':
+                tarefas_filtradas = tarefas_filtradas.filter(completo=True)
+            elif status == 'atrasada':
+                tarefas_filtradas = tarefas_filtradas.filter(data_vencimento__lt=hoje, completo=False)
+
+            if categoria:
+                tarefas_filtradas = tarefas_filtradas.filter(categoria=categoria)
+
+            # Adiciona o resultado ao contexto
+            context['resultado_filtro'] = tarefas_filtradas
+
+        return context
+
 class CriarTarefa(LoginRequiredMixin, FormView):
     template_name = "criartarefa.html"
     form_class = TarefaForm

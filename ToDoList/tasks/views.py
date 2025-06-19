@@ -1,5 +1,5 @@
 from django.shortcuts import render, reverse, get_object_or_404, redirect
-from django.views.generic import ListView, CreateView, FormView, UpdateView, RedirectView, DeleteView
+from django.views.generic import TemplateView, ListView, CreateView, FormView, UpdateView, RedirectView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import Task
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 class ListarTarefa(ListView):
     template_name = "listatarefas.html"
     model = Task
+
 class CriarTarefa(LoginRequiredMixin, FormView):
     template_name = "criartarefa.html"
     form_class = TarefaForm
@@ -94,3 +95,6 @@ class SairView(LogoutView):
     def dispatch(self, request, *args, **kwargs):
         messages.success(request, "Você saiu com sucesso!")
         return super().dispatch(request, *args, **kwargs)
+    
+class Pomodoro(TemplateView):
+    template_name= 'pomodoro.html'

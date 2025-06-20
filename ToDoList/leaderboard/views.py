@@ -36,8 +36,8 @@ def ranking_view(request):
         })
 
     context = {
-        "ranking_users": ranking_users,
-        "user": "Carla"  # Nome do usuário logado, para marcação (current-user)
+       "ranking_users": ranking_users,
+       #"user": "Carla"  # Nome do usuário logado, para marcação (current-user)
     }
 
     return render(request, 'ranking.html', context)

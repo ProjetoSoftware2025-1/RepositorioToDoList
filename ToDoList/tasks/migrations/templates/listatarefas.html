@@ -398,6 +398,119 @@
                 gap: 25px;
             }
         }
+
+        /* Barra de pesquisa */
+        .search-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            border-radius: 12px;
+            padding: 12px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        /* Campo de data */
+        .search-bar-container input[type="date"] {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .search-bar-container input[type="date"]:focus {
+            border-color: #3498db;
+            background: white;
+        }
+
+        /* Esconder os selects originais */
+        .search-bar-container select {
+            display: none;
+        }
+
+        /* Custom Select Visual */
+        .select-container {
+            position: relative;
+            flex: 1;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .custom-select:hover {
+            border-color: #3498db;
+        }
+
+        .select-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .select-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .select-dropdown.show {
+            display: block;
+        }
+
+        .select-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .select-option:hover {
+            background: #f0f0f0;
+        }
+
+        .select-option.selected {
+            background: #3498db;
+            color: white;
+        }
+
+        /* Botão pesquisar */
+        .search-bar-container button {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .search-bar-container button:hover {
+            background: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -429,6 +542,12 @@
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>
+
+            <a href="{% url 'task:pomodoro' %}" class="nav-item">
+                <span>🍅</span>
+                <span>Pomodoro</span>
+            </a>
+
             <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
         
@@ -444,7 +563,6 @@
                 <span>{{ user.get_full_name|default:user.username }}</span>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -487,6 +605,83 @@
                 <div class="stat-label">Atrasadas</div>
             </div>
         </div>
+
+        <!-- filtrar tarefas -->
+        <form method="get" class="filter-form search-bar-container">
+            <input type="date" name="data" value="{{ request.GET.data }}" placeholder="Data" />
+
+            <!-- STATUS -->
+            <div class="select-container">
+                <div class="custom-select" id="statusSelect">
+                    <span id="selectedStatusOption">
+                        {% if request.GET.status == 'pendente' %}Em Progresso
+                        {% elif request.GET.status == 'concluida' %}Concluída
+                        {% elif request.GET.status == 'atrasada' %}Atrasada
+                        {% else %}Status{% endif %}
+                    </span>
+                    <span class="select-arrow">▼</span>
+                </div>
+                <div class="select-dropdown" id="statusDropdown">
+                    <div class="select-option" data-value="pendente">Em Progresso</div>
+                    <div class="select-option" data-value="concluida">Concluída</div>
+                    <div class="select-option" data-value="atrasada">Atrasada</div>
+                </div>
+                <select name="status" id="statusSelectHidden">
+                    <option value="">Status</option>
+                    <option value="pendente" {% if request.GET.status == 'pendente' %}selected{% endif %}>Em Progresso</option>
+                    <option value="concluida" {% if request.GET.status == 'concluida' %}selected{% endif %}>Concluída</option>
+                    <option value="atrasada" {% if request.GET.status == 'atrasada' %}selected{% endif %}>Atrasada</option>
+                </select>
+            </div>
+
+            <!-- CATEGORIA -->
+            <div class="select-container">
+                <div class="custom-select" id="categoriaSelect">
+                    <span id="selectedCategoriaOption">
+                        {% if request.GET.categoria == 'PESSOAL' %}Pessoal
+                        {% elif request.GET.categoria == 'TRABALHO' %}Trabalho
+                        {% elif request.GET.categoria == 'ESTUDOS' %}Estudos
+                        {% else %}Categoria{% endif %}
+                    </span>
+                    <span class="select-arrow">▼</span>
+                </div>
+                <div class="select-dropdown" id="categoriaDropdown">
+                    <div class="select-option" data-value="PESSOAL">Pessoal</div>
+                    <div class="select-option" data-value="TRABALHO">Trabalho</div>
+                    <div class="select-option" data-value="ESTUDOS">Estudos</div>
+                </div>
+                <select name="categoria" id="categoriaSelectHidden">
+                    <option value="">Categoria</option>
+                    <option value="PESSOAL" {% if request.GET.categoria == 'PESSOAL' %}selected{% endif %}>Pessoal</option>
+                    <option value="TRABALHO" {% if request.GET.categoria == 'TRABALHO' %}selected{% endif %}>Trabalho</option>
+                    <option value="ESTUDOS" {% if request.GET.categoria == 'ESTUDOS' %}selected{% endif %}>Estudos</option>
+                </select>
+            </div>
+
+            <button type="submit">Pesquisar</button>
+        </form>
+
+
+        <!--lista de tarefas filtradas-->
+        {% if resultado_filtro %}
+        <div id="resultado-filtro" class="full-width-section" style="position: relative; margin-top: 20px; margin-bottom: 30px;">
+            <button onclick="limparFiltro()" style="position: absolute; color: rgb(168, 6, 6); top: 10px; right: 10px; border: none; background: transparent; font-size: 20px; cursor: pointer;">✖</button>
+            <h2 class="section-title">Resultado da Pesquisa</h2>
+            {% for tarefa in resultado_filtro %}
+            <a href="{% url 'task:atualizartarefa' pk=tarefa.id %}" class="task-item">
+                <div class="task-header">
+                    <div class="task-title">{{ tarefa.titulo }}</div>
+                    <div class="task-category trabalho">{{ tarefa.categoria }}</div>
+                </div>
+                <div class="task-time">{{ tarefa.data_vencimento }}</div>
+            </a>
+            {% empty %}
+            <p>Nenhuma tarefa encontrada com os filtros selecionados.</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+
 
         <!-- TASKS GRID -->
         <div class="tasks-grid">
@@ -635,6 +830,68 @@
             }
         `;
         document.head.appendChild(style);
+
+        function limparFiltro() {
+            // Limpa os campos
+            document.querySelectorAll('.filter-form input, .filter-form select').forEach(element => {
+                element.value = '';
+            });
+
+            // Oculta o bloco de resultado
+            const resultadoFiltro = document.getElementById('resultado-filtro');
+            if (resultadoFiltro) {
+                resultadoFiltro.style.display = 'none';
+            }
+
+            // Opcional: Redirecionar para a página sem filtros (recarrega a página limpa)
+            window.location.href = window.location.pathname;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            function setupCustomSelect(selectId, dropdownId, selectedId, hiddenSelectId) {
+                const select = document.getElementById(selectId);
+                const dropdown = document.getElementById(dropdownId);
+                const selected = document.getElementById(selectedId);
+                const hiddenSelect = document.getElementById(hiddenSelectId);
+                const options = dropdown.querySelectorAll('.select-option');
+                const arrow = select.querySelector('.select-arrow');
+
+                select.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('show');
+                    select.classList.toggle('active');
+                    arrow.classList.toggle('rotated');
+                });
+
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const value = this.getAttribute('data-value');
+                        const text = this.textContent;
+
+                        selected.textContent = text;
+                        hiddenSelect.value = value;
+
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+
+                        dropdown.classList.remove('show');
+                        select.classList.remove('active');
+                        arrow.classList.remove('rotated');
+                    });
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!select.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                        select.classList.remove('active');
+                        arrow.classList.remove('rotated');
+                    }
+                });
+            }
+
+            setupCustomSelect('statusSelect', 'statusDropdown', 'selectedStatusOption', 'statusSelectHidden');
+            setupCustomSelect('categoriaSelect', 'categoriaDropdown', 'selectedCategoriaOption', 'categoriaSelectHidden');
+        });
     </script>
 </body>
 </html>

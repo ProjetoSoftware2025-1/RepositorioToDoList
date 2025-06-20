@@ -36,9 +36,28 @@ def ranking_view(request):
         })
 
     context = {
-        "ranking_users": ranking_users,
-        "user": "Carla"  # Nome do usuário logado, para marcação (current-user)
+       "ranking_users": ranking_users,
+       #"user": "Carla"  # Nome do usuário logado, para marcação (current-user)
     }
 
     return render(request, 'ranking.html', context)
 
+def relatorio_view(request):
+    # Dados mockados para o relatório
+    dados_relatorio = {
+        "total_tasks": 15,
+        "tasks_concluidas": 12,
+        "tasks_pendentes": 3,
+        "performance_semanal": [
+            {"semana": "Semana 1", "concluidas": 5},
+            {"semana": "Semana 2", "concluidas": 7},
+            {"semana": "Semana 3", "concluidas": 3},
+            {"semana": "Semana 4", "concluidas": 8},
+        ]
+    }
+    
+    context = {
+        "dados_relatorio": dados_relatorio,
+    }
+    
+    return render(request, 'relatorio.html', context)

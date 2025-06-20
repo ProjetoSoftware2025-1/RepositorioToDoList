@@ -11,4 +11,5 @@ urlpatterns = [
     path('tasks/', include('tasks.urls')),
     path('homepage/', Homepage.as_view(), name='homepage'),
     path('ranking/', views.ranking_view, name='ranking'),
+    path('relatorio/', views.relatorio_view, name='relatorio'),
 ]

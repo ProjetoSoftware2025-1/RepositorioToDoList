@@ -6,102 +6,143 @@
     <title>Editar Tarefa</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Seu CSS personalizado aqui, como o do exemplo anterior */
+        /* ==================== */
+        /* GERAIS E RESET CSS  */
+        /* ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura/altura total */
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e0f2f7;
+            background-color: #4facfe; /* Cor de fundo suave */
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            flex-direction: column; /* Altera para coluna para melhor centralização vertical de um único item */
+            justify-content: center; /* Centraliza verticalmente */
+            align-items: center;     /* Centraliza horizontalmente */
+            min-height: 100vh;       /* Altura mínima da viewport */
             margin: 0;
-            padding: 20px;
+            padding: 20px;           /* Espaçamento interno em telas menores */
             box-sizing: border-box;
         }
 
+        /* ==================== */
+        /* ESTILOS DO FORMULÁRIO */
+        /* ==================== */
         form {
             background-color: #ffffff;
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra mais suave */
             width: 100%;
-            max-width: 500px;
+            max-width: 500px; /* Largura máxima para o formulário */
             box-sizing: border-box;
         }
 
         h1 {
-            color: #2c3e50;
+            color: #2c3e50; /* Cor escura para o título */
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2.2em;
+            font-size: 2.2em; /* Tamanho da fonte responsivo */
         }
 
+        /* Estilo para cada parágrafo (campo) do formulário */
         form p {
             margin-bottom: 20px;
         }
 
+        /* Estilo para os rótulos (labels) dos campos */
         form p label {
-            display: block;
+            display: block; /* Garante que o label ocupe sua própria linha */
             margin-bottom: 8px;
             font-weight: bold;
             color: #34495e;
             font-size: 1.1em;
         }
 
+        /* Estilo para campos de texto e textareas */
         form input[type="text"],
-        form textarea {
+        form textarea,
+        form input[type="date"], /* Adicionado para o DateField */
+        form input[type="number"] /* Adicione se tiver campos numéricos, como 'points' */
+        {
             width: 100%;
             padding: 12px;
-            border: 1px solid #b0c4de;
+            border: 1px solid #b0c4de; /* Borda suave */
             border-radius: 6px;
             font-size: 1em;
             box-sizing: border-box;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transições suaves */
+            outline: none; /* Remove o contorno padrão no foco */
         }
 
         form textarea {
-            resize: vertical;
+            resize: vertical; /* Permite redimensionar verticalmente */
             min-height: 100px;
         }
 
+        /* Estilo no foco para campos de texto e textareas */
         form input[type="text"]:focus,
-        form textarea:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+        form textarea:focus,
+        form input[type="date"]:focus, /* Adicionado para o DateField */
+        form input[type="number"]:focus /* Adicionado para campos numéricos */
+        {
+            border-color: #3498db; /* Borda azul no foco */
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3); /* Sombra suave no foco */
         }
 
+        /* ==================== */
+        /* ESTILOS DE CHECKBOX  */
+        /* ==================== */
         form p input[type="checkbox"] {
-            width: auto;
+            width: auto; /* Permite que o checkbox tenha sua largura natural */
             margin-right: 10px;
-            transform: scale(1.2);
+            transform: scale(1.2); /* Aumenta um pouco o checkbox */
         }
 
-        /* Ajuste específico para o checkbox, se estiver usando {{ form }} diretamente */
+        /* Ajuste específico para o label do checkbox quando usando {{ form }} */
+        /* Seleciona o parágrafo que contém um checkbox e então seu label */
         form p:has(input[type="checkbox"]) label {
-            display: inline-block; /* Para que o label fique ao lado do checkbox */
-            margin-left: 5px; /* Espaço entre o checkbox e o label */
-            font-weight: normal; /* Geralmente o label do checkbox não é negrito */
+            display: inline-block; /* Faz o label ficar ao lado do checkbox */
+            margin-left: 5px;
+            font-weight: normal; /* O label do checkbox geralmente não é negrito */
             font-size: 1em;
             vertical-align: middle; /* Alinha verticalmente com o checkbox */
         }
 
+        /* ==================== */
+        /* ESTILOS DOS BOTÕES   */
+        /* ==================== */
+        .button-group {
+            display: flex; /* Permite que os botões fiquem lado a lado */
+            gap: 15px;     /* Espaçamento entre os botões */
+            margin-top: 25px;
+            flex-wrap: wrap; /* Permite que os botões quebrem a linha em telas pequenas */
+        }
 
-        button[type="submit"], .btn-secondary {
+        button[type="submit"],
+        .btn-secondary,
+        .btn-concluir { /* Adicionado uma classe específica para o botão Concluir */
             padding: 14px 25px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-size: 1.1em;
             font-weight: bold;
-            width: 100%;
+            flex-grow: 1; /* Faz os botões crescerem para preencher o espaço */
             transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 25px;
+            text-decoration: none; /* Garante que links como botões não tenham sublinhado */
+            color: white; /* Garante a cor do texto para todos os botões */
+            display: flex; /* Para centralizar o texto se necessário */
+            justify-content: center;
+            align-items: center;
         }
 
+        /* Estilo do botão de salvar (verde) */
         button[type="submit"] {
             background-color: #28a745;
-            color: white;
         }
 
         button[type="submit"]:hover {
@@ -109,9 +150,9 @@
             transform: translateY(-2px);
         }
 
+        /* Estilo do botão secundário (cinza) */
         .btn-secondary {
             background-color: #6c757d;
-            color: white;
         }
 
         .btn-secondary:hover {
@@ -119,10 +160,23 @@
             transform: translateY(-2px);
         }
 
+        /* Estilo do botão Concluir (laranja para diferenciar) */
+        .btn-concluir {
+            background-color: #ffc107; /* Laranja */
+            color: #343a40; /* Texto escuro para contraste */
+        }
 
+        .btn-concluir:hover {
+            background-color: #e0a800; /* Laranja mais escuro */
+            transform: translateY(-2px);
+        }
+
+        /* ==================== */
+        /* ESTILOS DE ERRO      */
+        /* ==================== */
         .errorlist {
-            color: #dc3545;
-            list-style-type: none;
+            color: #dc3545; /* Vermelho vibrante para erros */
+            list-style-type: none; /* Remove marcadores de lista */
             padding: 0;
             margin-top: 5px;
             margin-bottom: 15px;
@@ -132,17 +186,28 @@
             margin-bottom: 3px;
         }
 
+        /* ==================== */
+        /* RESPONSIVIDADE       */
+        /* ==================== */
         @media (max-width: 600px) {
+            body {
+                padding: 10px; /* Reduz o padding do body em telas menores */
+            }
             form {
                 padding: 25px;
-                margin: 10px;
+                margin: 0; /* Remove margens extras */
             }
             h1 {
                 font-size: 1.8em;
             }
-            button[type="submit"], .btn-secondary {
+            .button-group {
+                flex-direction: column; /* Empilha os botões verticalmente */
+                gap: 10px;
+            }
+            button[type="submit"], .btn-secondary, .btn-concluir {
                 padding: 12px 20px;
                 font-size: 1em;
+                width: 100%; /* Garante que ocupem a largura total */
             }
         }
     </style>
@@ -152,7 +217,15 @@
         <h1>Editar Tarefa</h1>
         {% csrf_token %}
         {{ form }}
-        <button type="submit">Salvar Alterações</button>
+        <div class="button-group">
+            <button type="submit">Salvar Alterações</button>
+            <a href="{% url 'task:listatarefas' %}" class="btn-secondary">Cancelar</a>
+            <a href="{% url 'task:concluirtarefa' pk=object.id %}" class="btn-concluir">Concluir</a>
+        </div>
     </form>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

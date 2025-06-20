@@ -550,7 +550,6 @@
 
             <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
-        
         <div class="user-section">
             <div class="user-item">
                 <div class="user-avatar-mini">
@@ -688,13 +687,13 @@
             <!-- TODAY'S TASKS -->
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas de Hoje</h2>
-                {% for tarefa in lista_tarefas_do_dia %}
-                <a href="#" class="task-item today">
+                {% for task in lista_tarefas_do_dia %}
+                <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item today">
                     <div class="task-header">
-                        <div class="task-title">{{ tarefa.titulo }}</div>
-                        <div class="task-category trabalho">{{ tarefa.categoria }}</div>
+                        <div class="task-title">{{ task.titulo }}</div>
+                        <div class="task-category trabalho">{{ task.categoria }}</div>
                     </div>
-                    <div class="task-time">{{ tarefa.data_vencimento }}</div>
+                    <div class="task-time">{{ task.data_vencimento }}</div>
                 </a>
                 {% endfor %}
             </div>
@@ -717,7 +716,7 @@
         <!-- WEEKLY TASKS -->
         <div class="full-width-section">
             <h2 class="section-title">Tarefas da Semana</h2>
-            {% for task in lista_tarefas_afazer %}
+            {% for task in lista_tarefas_semana %}
             <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item weekly">
                 <div class="task-header">
                     <div class="task-title">{{ task.titulo }}</div>

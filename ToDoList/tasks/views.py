@@ -1,6 +1,6 @@
 from django.shortcuts import render, reverse, get_object_or_404, redirect
 from django.views.generic import TemplateView, ListView, CreateView, FormView, UpdateView, RedirectView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .models import Task
 from .forms import TarefaForm, ConcluirTarefaForm, CadastrarUsuario
@@ -8,9 +8,11 @@ import logging
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.contrib import messages
+import datetime
 from datetime import date
 from django.db.models import Q
 from django.views.generic import TemplateView
+
 
 
 logger = logging.getLogger(__name__)
@@ -24,14 +26,17 @@ class ListarTarefa(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         hoje = date.today()
+        start_of_week = hoje - datetime.timedelta(days=hoje.weekday())
+        end_of_week = start_of_week + datetime.timedelta(days=6)
 
         # Todas as tarefas do usuário
         todas_tarefas = Task.objects.filter(user=user)
 
         # Listas fixas
-        context['lista_tarefas_do_dia'] = todas_tarefas.filter(data_vencimento=hoje)
+        context['lista_tarefas_do_dia'] = todas_tarefas.filter(data_vencimento=hoje, completo=False)
         context['lista_tarefas_atrasadas'] = todas_tarefas.filter(data_vencimento__lt=hoje, completo=False)
         context['lista_tarefas_afazer'] = todas_tarefas.filter(completo=False)
+        context['lista_tarefas_da_semana'] = todas_tarefas.filter(data_vencimento__range=[start_of_week, end_of_week], completo=False).order_by('data_vencimento')
 
         # Totais por categoria
         context['total_tarefas_afazer'] = todas_tarefas.filter(completo=False).count()
@@ -92,8 +97,8 @@ class AtualizarTarefa(UpdateView):
     def get_success_url(self):
         return reverse('task:listatarefas')
 
-class ExcluirTarefa(DeleteView):
-    template_name = "listatarefas.html"
+class ExcluirTarefa(LoginRequiredMixin, DeleteView):
+    template_name = "confirmarexclusao.html"
     model = Task
 
     def get_success_url(self):

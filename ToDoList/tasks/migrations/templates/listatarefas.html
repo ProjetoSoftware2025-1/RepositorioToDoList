@@ -702,7 +702,7 @@
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas Atrasadas</h2>
                 {% for task in lista_tarefas_atrasadas %}
-                <a href="#" class="task-item overdue">
+                <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item overdue">
                     <div class="task-header">
                         <div class="task-title">{{ task.titulo }}</div>
                         <div class="task-category administrativo">{{ task.categoria }}</div>
@@ -716,7 +716,7 @@
         <!-- WEEKLY TASKS -->
         <div class="full-width-section">
             <h2 class="section-title">Tarefas da Semana</h2>
-            {% for task in lista_tarefas_semana %}
+            {% for task in lista_tarefas_da_semana %}
             <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item weekly">
                 <div class="task-header">
                     <div class="task-title">{{ task.titulo }}</div>

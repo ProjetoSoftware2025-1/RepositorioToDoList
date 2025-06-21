@@ -12,7 +12,13 @@ import datetime
 from datetime import date
 from django.db.models import Q
 from django.views.generic import TemplateView
-
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import UpdateView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import update_session_auth_hash
+from .forms import AtualizarPerfilForm
 
 
 logger = logging.getLogger(__name__)
@@ -153,3 +159,41 @@ class SairView(LogoutView):
     
 class Pomodoro(TemplateView):
     template_name= 'pomodoro.html'
+
+
+class AtualizarPerfil(LoginRequiredMixin, FormView):
+    template_name = 'atualizarperfil.html'
+    form_class = AtualizarPerfilForm
+    success_url = reverse_lazy('leaderboard:dashboard')
+
+    def get_initial(self):
+        return {
+            'username': self.request.user.username,
+            'email': self.request.user.email,
+        }
+
+    def form_valid(self, form):
+        user = self.request.user
+        data = form.cleaned_data
+
+        # Só atualiza os campos se foram preenchidos
+        if data.get('username'):
+            user.username = data['username']
+
+        if data.get('email'):
+            user.email = data['email']
+
+        if data.get('nova_senha') and data.get('confirmar_senha'):
+            if data['nova_senha'] == data['confirmar_senha']:
+                user.set_password(data['nova_senha'])
+            else:
+                messages.error(self.request, 'As senhas não coincidem.')
+                return self.form_invalid(form)
+
+        user.save()
+        messages.success(self.request, 'Seus dados foram atualizados com sucesso.')
+        return redirect(self.success_url)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Por favor, corrija os erros abaixo.')
+        return super().form_invalid(form)

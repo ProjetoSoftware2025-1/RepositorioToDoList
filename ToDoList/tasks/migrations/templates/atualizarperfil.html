@@ -1,0 +1,65 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly - Atualizar</title>
+    {% load static %}
+</head>
+<body>
+    <div class="container">
+    <div class="cadastro-card">
+        <div class="left-side">
+            <h2>Atualize seus dados<br> com segurança</h2>
+        </div>
+
+        <div class="right-side">
+            <h3>Editar Perfil</h3>
+
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_username">Usuário</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="error-message">{{ form.username.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_email">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="error-message">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_nova_senha">Nova senha</label>
+                    {{ form.nova_senha }}
+                    {% if form.nova_senha.errors %}
+                        <div class="error-message">{{ form.nova_senha.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_confirmar_senha">Confirmar nova senha</label>
+                    {{ form.confirmar_senha }}
+                    {% if form.confirmar_senha.errors %}
+                        <div class="error-message">{{ form.confirmar_senha.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-cadastrar">SALVAR</button>
+                <button type="button" class="btn-voltar"
+                        onclick="window.location.href='{% url 'task:listatarefas' %}'">CANCELAR</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -36,3 +36,18 @@ class CadastrarUsuario(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class AtualizarPerfilForm(forms.Form):
+    username = forms.CharField(required=False, label="Usuário")
+    email = forms.EmailField(required=False)
+    nova_senha = forms.CharField(widget=forms.PasswordInput, required=False)
+    confirmar_senha = forms.CharField(widget=forms.PasswordInput, required=False)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        nova_senha = cleaned_data.get("nova_senha")
+        confirmar_senha = cleaned_data.get("confirmar_senha")
+
+        if nova_senha or confirmar_senha:
+            if nova_senha != confirmar_senha:
+                raise forms.ValidationError("As senhas não coincidem.")

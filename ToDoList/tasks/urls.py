@@ -1,6 +1,6 @@
 from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_view
-from .views import Pomodoro, CriarTarefa, AtualizarTarefa, ConcluirTarefa, ExcluirTarefa, ListarTarefa, Login, CadastroUsuario, SairView
+from .views import AtualizarPerfil, Pomodoro, CriarTarefa, AtualizarTarefa, ConcluirTarefa, ExcluirTarefa, ListarTarefa, Login, CadastroUsuario, SairView
 
 # url - view - template
 app_name = 'task'
@@ -15,6 +15,7 @@ urlpatterns = [
     path('cadastro/', CadastroUsuario.as_view(), name='cadastro'),
     path('logout/', SairView.as_view(next_page='task:login'), name='logout'),
     path('pomodoro/', Pomodoro.as_view(), name='pomodoro'),
+    path('editarperfil/', AtualizarPerfil.as_view(), name='editarperfil'),
     
     # path('password-reset/', auth_view.PasswordResetView.as_view(template_name='registration/password_reset.html'), name='password_reset'),
 ]

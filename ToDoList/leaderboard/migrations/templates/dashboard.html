@@ -489,7 +489,7 @@
                 {% for task in lista_tarefas_do_dia_geral %}
                     <div class="task-item">
                         <div class="task-header">
-                            <div class="task-title">{{ task.titulo }}</div>
+                            <div class="task-title">{{ task.titulo }} ({{ task.user }})</div>
                             <div class="task-points">
                                 {% if task.points %}
                                     + {{ task.points }} ponto{{ task.points|pluralize }}
@@ -523,7 +523,7 @@
                 {% for task in lista_tarefas_atrasadas_geral %}
                     <div class="task-item overdue">
                         <div class="task-header">
-                            <div class="task-title">{{ task.titulo }}</div>
+                            <div class="task-title">{{ task.titulo }} ({{ task.user }})</div>
                             <div class="task-points no-points">Sem ponto</div>
                         </div>
                         <div class="task-time">

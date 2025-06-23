@@ -9,6 +9,12 @@
 <body>
     <h2>Minhas Ligas</h2>
 
+    <p>
+        <a href="{% url 'leaderboard:ingressar_liga' %}">
+            ➕ Entrar em uma nova liga
+        </a>
+    </p>
+
     {% if ligas %}
         <ul>
             {% for liga in ligas %}

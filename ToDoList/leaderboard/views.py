@@ -287,7 +287,14 @@ def minhas_ligas(request):
 @login_required
 def detalhe_liga(request, liga_id):
     liga = get_object_or_404(Liga, id=liga_id)
-    return render(request, 'detalhe_liga.html', {'liga': liga})
+
+    # Participações da liga ordenadas por pontuação decrescente
+    participacoes = liga.participacoes.order_by('-pontuacao')
+
+    return render(request, 'detalhe_liga.html', {
+        'liga': liga,
+        'participacoes': participacoes,
+    })
 
 
 @login_required

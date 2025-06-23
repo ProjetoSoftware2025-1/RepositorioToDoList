@@ -15,8 +15,11 @@
 
     <h3>Participantes</h3>
     <ul>
-        {% for competidor in liga.competidores.all %}
-            <li>{{ competidor.usuario.get_full_name|default:competidor.usuario.username }}</li>
+        {% for participacao in participacoes %}
+            <li>
+                {{ participacao.competidor.usuario.get_full_name|default:participacao.competidor.usuario.username }}
+                — <strong>{{ participacao.pontuacao }}</strong> pts
+            </li>
         {% empty %}
             <li>Sem participantes na liga.</li>
         {% endfor %}

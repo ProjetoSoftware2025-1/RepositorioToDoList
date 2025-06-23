@@ -534,7 +534,7 @@
                 <span>📈</span>
                 <span>Relatórios</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'leaderboard:calendario' %}" class="nav-item">
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
@@ -593,7 +593,7 @@
         <div class="stats-container">
             <div class="stat-box processo">
                 <div class="stat-number" data-target="{{ total_tarefas_afazer }}">0</div>
-                <div class="stat-label">Em Processo</div>
+                <div class="stat-label">Em Progresso</div>
             </div>
             <div class="stat-box concluidas">
                 <div class="stat-number" data-target="{{ total_tarefas_concluidas }}">0</div>
@@ -702,7 +702,7 @@
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas Atrasadas</h2>
                 {% for task in lista_tarefas_atrasadas %}
-                <a href="#" class="task-item overdue">
+                <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item overdue">
                     <div class="task-header">
                         <div class="task-title">{{ task.titulo }}</div>
                         <div class="task-category administrativo">{{ task.categoria }}</div>
@@ -716,7 +716,7 @@
         <!-- WEEKLY TASKS -->
         <div class="full-width-section">
             <h2 class="section-title">Tarefas da Semana</h2>
-            {% for task in lista_tarefas_semana %}
+            {% for task in lista_tarefas_da_semana %}
             <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item weekly">
                 <div class="task-header">
                     <div class="task-title">{{ task.titulo }}</div>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly - Minhas Ligas</title>
+    {% load static %}
+</head>
+<body>
+    <h2>Minhas Ligas</h2>
+
+    <p>
+        <a href="{% url 'leaderboard:ingressar_liga' %}">
+            ➕ Entrar em uma nova liga
+        </a>
+    </p>
+
+    {% if ligas %}
+        <ul>
+            {% for liga in ligas %}
+            <li>
+                <h3>
+                    <a href="{% url 'leaderboard:detalhe_liga' liga.id %}">
+                        {{ liga.nome }}
+                    </a>
+                </h3>
+                <p><strong>Descrição:</strong> {{ liga.descricao|default:"Sem descrição." }}</p>
+                <p><strong>Início:</strong> {{ liga.data_inicio|date:"d/m/Y" }}</p>
+                <p><strong>Fim:</strong> {{ liga.data_fim|date:"d/m/Y" }}</p>
+                <p><strong>Código de convite:</strong> {{ liga.codigo_convite }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Você ainda não participa de nenhuma liga.</p>
+    {% endif %}
+</body>
+</html>

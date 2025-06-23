@@ -391,7 +391,7 @@
                 <span>📈</span>
                 <span>Relatórios</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'leaderboard:calendario' %}" class="nav-item">
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
@@ -464,7 +464,7 @@
             
             <div class="stats-container">
                 <div class="stat-box pendente">
-                    <div class="stat-number" data-target="{{ total_tarefas_afazer }}">0</div>
+                    <div class="stat-number" data-target="{{ total_tarefas_afazer_geral }}">0</div>
                     <div class="stat-label">Pendente</div>
                 </div>
                 <div class="stat-box progresso">
@@ -472,11 +472,11 @@
                     <div class="stat-label">Em Progresso</div>
                 </div>
                 <div class="stat-box concluidas">
-                    <div class="stat-number" data-target="{{ total_tarefas_concluidas }}">0</div>
+                    <div class="stat-number" data-target="{{ total_tarefas_concluidas_geral }}">0</div>
                     <div class="stat-label">Concluídas</div>
                 </div>
                 <div class="stat-box atrasadas">
-                    <div class="stat-number" data-target="{{ total_tarefas_atrasadas }}">0</div>
+                    <div class="stat-number" data-target="{{ total_tarefas_atrasadas_geral }}">0</div>
                     <div class="stat-label">Atrasadas</div>
                 </div>
             </div>
@@ -486,10 +486,10 @@
         <div class="tasks-section">
             <div class="task-card">
                 <h3>Tarefas de Hoje</h3>
-                {% for task in lista_tarefas_do_dia %}
+                {% for task in lista_tarefas_do_dia_geral %}
                     <div class="task-item">
                         <div class="task-header">
-                            <div class="task-title">{{ task.titulo }}</div>
+                            <div class="task-title">{{ task.titulo }} ({{ task.user }})</div>
                             <div class="task-points">
                                 {% if task.points %}
                                     + {{ task.points }} ponto{{ task.points|pluralize }}
@@ -520,10 +520,10 @@
 
             <div class="task-card">
                 <h3>Tarefas Atrasadas</h3>
-                {% for task in lista_tarefas_atrasadas %}
+                {% for task in lista_tarefas_atrasadas_geral %}
                     <div class="task-item overdue">
                         <div class="task-header">
-                            <div class="task-title">{{ task.titulo }}</div>
+                            <div class="task-title">{{ task.titulo }} ({{ task.user }})</div>
                             <div class="task-points no-points">Sem ponto</div>
                         </div>
                         <div class="task-time">

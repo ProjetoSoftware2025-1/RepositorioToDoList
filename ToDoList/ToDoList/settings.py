@@ -72,7 +72,6 @@ TEMPLATES = [
                 'tasks.novos_context.lista_tarefas_atrasadas',
                 'tasks.novos_context.lista_tarefas_do_dia',
                 'tasks.novos_context.total_tarefas',
-                'tasks.novos_context.lista_tarefas_da_semana',
             ],
         },
     },

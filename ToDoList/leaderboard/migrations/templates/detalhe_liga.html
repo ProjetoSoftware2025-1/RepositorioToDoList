@@ -16,7 +16,7 @@
     <h3>Participantes</h3>
     <ul>
         {% for competidor in liga.competidores.all %}
-            <li>{{ competidor.usuario.username }}</li>
+            <li>{{ competidor.usuario.get_full_name|default:competidor.usuario.username }}</li>
         {% empty %}
             <li>Sem participantes na liga.</li>
         {% endfor %}

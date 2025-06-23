@@ -1,7 +1,7 @@
 import json
 import datetime
 import calendar
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from tasks.models import Task
 from collections import defaultdict
@@ -10,8 +10,11 @@ from django.http import JsonResponse
 from django.utils import timezone
 from datetime import timedelta, datetime
 from django.contrib.auth.models import User
-from django.shortcuts import render
 from django.http import HttpResponse
+from .forms import LigaForm
+from .models import Competidor, Participacao, Liga
+from django.contrib import messages
+from .forms import IngressoLigaForm
 
 # Create your views here.
 class Homepage(ListView):
@@ -248,3 +251,67 @@ def get_day_tasks(request):
 
     
     return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+def criar_liga(request):
+    if request.method == 'POST':
+        form = LigaForm(request.POST)
+        if form.is_valid():
+            liga = form.save()
+
+            # Garante que o usuário tenha um perfil Competidor
+            competidor, created = Competidor.objects.get_or_create(usuario=request.user)
+
+            # Cria a participação do criador na liga
+            Participacao.objects.create(
+                competidor=competidor,
+                liga=liga,
+                pontuacao=0  # opcional
+            )
+
+            return redirect('detalhe_liga', liga_id=liga.id)
+    else:
+        form = LigaForm()
+
+    return render(request, 'criar_liga.html', {'form': form})
+
+@login_required
+def minhas_ligas(request):
+    try:
+        competidor = request.user.competidor
+        ligas = competidor.ligas.all()  # relacionamento ManyToMany
+    except Competidor.DoesNotExist:
+        ligas = []
+
+    return render(request, 'minhas_ligas.html', {'ligas': ligas})
+
+@login_required
+def detalhe_liga(request, liga_id):
+    liga = get_object_or_404(Liga, id=liga_id)
+    return render(request, 'detalhe_liga.html', {'liga': liga})
+
+
+@login_required
+def ingressar_liga(request):
+    if request.method == 'POST':
+        form = IngressoLigaForm(request.POST)
+        if form.is_valid():
+            codigo = form.cleaned_data['codigo_convite'].strip().upper()
+
+            # Tenta encontrar a liga pelo código
+            liga = get_object_or_404(Liga, codigo_convite=codigo)
+
+            # Garante que o usuário seja um competidor
+            competidor, _ = Competidor.objects.get_or_create(usuario=request.user)
+
+            # Verifica se já participa
+            if Participacao.objects.filter(competidor=competidor, liga=liga).exists():
+                messages.info(request, f"Você já participa da liga '{liga.nome}'.")
+            else:
+                Participacao.objects.create(competidor=competidor, liga=liga)
+                messages.success(request, f"Você entrou na liga '{liga.nome}' com sucesso!")
+
+            return redirect('detalhe_liga', liga_id=liga.id)
+    else:
+        form = IngressoLigaForm()
+
+    return render(request, 'ingressar_liga.html', {'form': form})

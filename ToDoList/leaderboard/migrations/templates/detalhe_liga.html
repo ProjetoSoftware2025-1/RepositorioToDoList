@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly - Detalhes da Liga</title>
+    {% load static %}
+</head>
+<body>
+    <h2>{{ liga.nome }}</h2>
+
+    <p><strong>Início:</strong> {{ liga.data_inicio|date:"d/m/Y" }}</p>
+    <p><strong>Fim:</strong> {{ liga.data_fim|date:"d/m/Y" }}</p>
+    <p><strong>Código de Convite:</strong> {{ liga.codigo_convite }}</p>
+
+    <h3>Participantes</h3>
+    <ul>
+        {% for competidor in liga.competidores.all %}
+            <li>{{ competidor.usuario.username }}</li>
+        {% empty %}
+            <li>Sem participantes na liga.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'leaderboard:minhas_ligas' %}">← Voltar para minhas ligas</a>
+</body>
+</html>

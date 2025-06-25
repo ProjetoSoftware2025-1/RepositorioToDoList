@@ -570,11 +570,13 @@
                 </div>
                 
                 <div class="productivity-info">
-                    <div class="productivity-score">{{ productivity_score|default:"75" }}%</div>
-                    <div class="productivity-label">de comprometimento</div>
-                    
+                    <div class="productivity-score">
+                        {{ percentual_conclusao|default:"0" }}%
+                    </div>
+                    <div class="productivity-label">das tarefas concluídas</div>
+
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{ productivity_score|default:'75' }}%"></div>
+                        <div class="progress-fill" style="width: {{ percentual_conclusao|default:"0" }}%"></div>
                     </div>
                 </div>
 
@@ -588,9 +590,13 @@
                         <div class="stat-label">Atrasadas</div>
                     </div>
                     <div class="stat-item concluidas">
-                        <div class="stat-value" data-target="{{ percentual_conclusao|default:'0' }}">0</div>
-                        <div class="stat-label">% Concluídas</div>
+                    <div class="stat-value" data-target="{{ total_tarefas_concluidas|default:'0' }}">
+                        {{ total_tarefas_concluidas|default:'0' }}
                     </div>
+                    <div class="stat-label">
+                        Concluídas ({{ percentual_conclusao|default:'0' }}%)
+                    </div>
+                </div>
                 </div>
             </div>
         </div>

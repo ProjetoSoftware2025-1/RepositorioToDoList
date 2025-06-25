@@ -1,5 +1,5 @@
 import json
-import datetime
+from datetime import datetime, date
 import calendar
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
@@ -15,6 +15,7 @@ from .forms import LigaForm
 from .models import Competidor, Participacao, Liga
 from django.contrib import messages
 from .forms import IngressoLigaForm
+from tasks.models import Task
 
 # Create your views here.
 class Homepage(ListView):
@@ -322,3 +323,33 @@ def ingressar_liga(request):
         form = IngressoLigaForm()
 
     return render(request, 'ingressar_liga.html', {'form': form})
+
+def relatorio_view(request):
+    hoje = date.today()
+    inicio_semana = hoje - timedelta(days=hoje.weekday())
+
+    tarefas_usuario = Task.objects.filter(user=request.user)
+
+    # Contagens
+    total_tarefas_concluidas_hoje = tarefas_usuario.filter(completo=True, criado_em__date=hoje).count()
+    total_tarefas_concluidas_semana = tarefas_usuario.filter(completo=True, criado_em__date__gte=inicio_semana).count()
+    total_tarefas_concluidas = tarefas_usuario.filter(completo=True).count()
+
+    total_tarefas_criadas = tarefas_usuario.count()
+    total_tarefas_em_progresso = tarefas_usuario.filter(completo=False, data_vencimento__gte=hoje).count()
+    total_tarefas_atrasadas = tarefas_usuario.filter(completo=False, data_vencimento__lt=hoje).count()
+
+    percentual_conclusao = 0
+    if total_tarefas_criadas > 0:
+        percentual_conclusao = int((total_tarefas_concluidas / total_tarefas_criadas) * 100)
+
+    context = {
+        'total_tarefas_concluidas_hoje': total_tarefas_concluidas_hoje,
+        'total_tarefas_concluidas_semana': total_tarefas_concluidas_semana,
+        'total_tarefas_concluidas': total_tarefas_concluidas,
+        'total_tarefas_afazer': total_tarefas_em_progresso,
+        'total_tarefas_atrasadas': total_tarefas_atrasadas,
+        'percentual_conclusao': percentual_conclusao,
+    }
+
+    return render(request, 'relatorio.html', context)

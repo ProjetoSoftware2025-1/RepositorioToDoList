@@ -756,27 +756,31 @@
             <h3 style="margin-top: 0; margin-bottom: 20px;">Classificação</h3>
             
             <ul class="participants-list">
-                {% for participacao in participacoes %}
-                <li class="participant-item">
-                    <div class="participant-info">
-                        <div class="participant-avatar">
-                            {{ participacao.competidor.usuario.first_name.0|default:"U" }}
-                        </div>
-                        <div>
-                            <strong>{{ participacao.competidor.usuario.get_full_name|default:participacao.competidor.usuario.username }}</strong>
-                            <div style="font-size: 14px; color: #7f8c8d;">@{{ participacao.competidor.usuario.username }}</div>
-                        </div>
-                    </div>
-                    <div style="font-weight: bold; color: #2c3e50;">
-                        {{ participacao.pontuacao }} pts
-                    </div>
-                </li>
-                {% empty %}
-                <li style="text-align: center; padding: 30px; color: #7f8c8d;">
-                    Nenhum participante nesta liga
-                </li>
-                {% endfor %}
-            </ul>
+    {% for participacao in participacoes %}
+    <li class="participant-item">
+        <div class="participant-info">
+            <div class="participant-avatar">
+                {{ participacao.competidor.usuario.first_name.0|default:"U" }}
+            </div>
+            <div>
+                <strong>
+                    {{ forloop.counter }}º 
+                    {{ participacao.competidor.usuario.get_full_name|default:participacao.competidor.usuario.username }}
+                    {% if forloop.first %} 👑{% endif %}
+                </strong>
+                <div style="font-size: 14px; color: #7f8c8d;">@{{ participacao.competidor.usuario.username }}</div>
+            </div>
+        </div>
+        <div style="font-weight: bold; color: #2c3e50;">
+            {{ participacao.pontuacao }} pts
+        </div>
+    </li>
+    {% empty %}
+    <li style="text-align: center; padding: 30px; color: #7f8c8d;">
+        Nenhum participante nesta liga
+    </li>
+    {% endfor %}
+</ul>
         </div>
 
         <div style="margin-top: 30px;">

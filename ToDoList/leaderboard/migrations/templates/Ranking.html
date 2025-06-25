@@ -379,8 +379,7 @@
         </div>
         
         <div class="nav-menu">
-            <!-- URLs nomeadas do Django - você precisa criar essas views e URLs -->
-            <a href="{% url 'leaderboard:homepage' %}" class="nav-item active">
+            <a href="{% url 'leaderboard:homepage' %}" class="nav-item">
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
@@ -396,16 +395,26 @@
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
+            <a href="{% url 'leaderboard:ranking' %}" class="nav-item active">
                 <span>🏆</span>
                 <span>Ranking</span>
             </a>
-
             <a href="{% url 'task:pomodoro' %}" class="nav-item">
                 <span>🍅</span>
                 <span>Pomodoro</span>
             </a>
-
+            <a href="{% url 'leaderboard:ingressar_liga' %}" class="nav-item">
+                <span>🔑</span>
+                <span>Ingressar na Liga</span>
+            </a>
+            <a href="{% url 'leaderboard:minhas_ligas' %}" class="nav-item">
+                <span>👊</span>
+                <span>Minhas Ligas</span>
+            </a>
+            <a href="{% url 'leaderboard:criar_liga' %}" class="nav-item">
+                <span>🏆</span>
+                <span>Criar uma liga</span>
+            </a>
             <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
         
@@ -555,6 +564,20 @@
 
         // Atualizar ranking a cada 2 minutos (opcional)
         setInterval(updateRanking, 120000);
+
+           function logout() {
+            fetch("{% url 'task:logout' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            });
+        }
     </script>
 </body>
 </html>

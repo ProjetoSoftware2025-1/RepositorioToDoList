@@ -268,7 +268,7 @@ def criar_liga(request):
                 pontuacao=0  # opcional
             )
 
-            return redirect('detalhe_liga', liga_id=liga.id)
+            return redirect('leaderboard:detalhe_liga', liga_id=liga.id)
     else:
         form = LigaForm()
 
@@ -317,7 +317,7 @@ def ingressar_liga(request):
                 Participacao.objects.create(competidor=competidor, liga=liga)
                 messages.success(request, f"Você entrou na liga '{liga.nome}' com sucesso!")
 
-            return redirect('detalhe_liga', liga_id=liga.id)
+            return redirect('leaderboard:detalhe_liga', liga_id=liga.id)
     else:
         form = IngressoLigaForm()
 

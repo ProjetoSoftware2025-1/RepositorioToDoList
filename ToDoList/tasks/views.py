@@ -19,6 +19,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
 from .forms import AtualizarPerfilForm
+from leaderboard.models import Competidor, Participacao
 
 
 logger = logging.getLogger(__name__)
@@ -110,6 +111,17 @@ class ExcluirTarefa(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         return reverse('task:listatarefas')
 
+# class ConcluirTarefa(LoginRequiredMixin, UpdateView):
+#     model = Task
+#     form_class = ConcluirTarefaForm
+#     template_name = "confirmarconclusao.html"
+#     success_url = reverse_lazy("task:listatarefas")
+
+#     def get_initial(self):
+#         initial = super().get_initial()
+#         initial['completo'] = True
+#         return initial
+
 class ConcluirTarefa(LoginRequiredMixin, UpdateView):
     model = Task
     form_class = ConcluirTarefaForm
@@ -120,6 +132,25 @@ class ConcluirTarefa(LoginRequiredMixin, UpdateView):
         initial = super().get_initial()
         initial['completo'] = True
         return initial
+
+    def form_valid(self, form):
+        # Marcar a tarefa como concluída
+        response = super().form_valid(form)
+
+        # Buscar o competidor correspondente ao usuário logado
+        try:
+            competidor = self.request.user.competidor
+        except Competidor.DoesNotExist:
+            competidor = None
+
+        # Se for um competidor, incrementar pontuação em todas as ligas
+        if competidor:
+            participacoes = Participacao.objects.filter(competidor=competidor)
+            for participacao in participacoes:
+                participacao.pontuacao += 1
+                participacao.save()
+
+        return response
 
 class Login(LoginView):
     template_name = 'login.html'

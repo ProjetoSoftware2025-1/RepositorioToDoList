@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly - Calendário</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            background: #2c3e50;
+            color: white;
+            padding: 0;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: #34495e;
+            border-bottom: 1px solid #4a5f7a;
+        }
+
+        .sidebar-header h2 {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .btn-sair{
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: block;
+            font-size: 1rem;
+            padding-left: 1.85rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        .span-btn{
+            margin-left: .5rem;
+        }
+
+        .nav-item:hover, .btn-sair:hover {
+            background: #34495e;
+            border-left-color: #3498db;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #3498db;
+            border-left-color: #2980b9;
+        }
+
+        .nav-item span {
+            margin-left: 10px;
+            font-size: 14px;
+        }
+
+        .user-section {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #34495e;
+            border-radius: 8px;
+        }
+
+        .user-avatar-mini {
+            width: 30px;
+            height: 30px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 220px;
+            flex: 1;
+            padding: 30px 40px;
+            max-width: calc(100vw - 220px);
+        }
+
+        /* HEADER */
+        .page-header {
+            background: white;
+            padding: 25px 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .calendar-tag {
+            background: #9b59b6;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px 25px;
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 15px;
+        }
+
+        .user-info h3 {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .user-points {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* CALENDAR CONTROLS */
+        .calendar-controls {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calendar-navigation {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: background 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #2980b9;
+        }
+
+        .current-month {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .view-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-btn {
+            padding: 10px 20px;
+            border: 2px solid #e9ecef;
+            background: white;
+            color: #7f8c8d;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .view-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .view-btn:hover {
+            border-color: #3498db;
+        }
+
+        /* CALENDAR GRID */
+        .calendar-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            background: #34495e;
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .calendar-day {
+            background: white;
+            min-height: 120px;
+            padding: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .calendar-day:hover {
+            background: #f8f9fa;
+        }
+
+        .calendar-day.other-month {
+            background: #f8f9fa;
+            color: #bdc3c7;
+        }
+
+        .calendar-day.today {
+            background: #e3f2fd;
+            border: 2px solid #3498db;
+        }
+
+        .day-number {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .other-month .day-number {
+            color: #bdc3c7;
+        }
+
+        .today .day-number {
+            color: #3498db;
+        }
+
+        /* TASK INDICATORS */
+        .task-indicator {
+            background: #3498db;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-bottom: 3px;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .task-indicator:hover {
+            transform: scale(1.05);
+        }
+
+        .task-indicator.pessoal {
+            background: #27ae60;
+        }
+
+        .task-indicator.trabalho {
+            background: #e74c3c;
+        }
+
+        .task-indicator.estudos {
+            background: #f39c12;
+        }
+
+        .task-indicator.completed {
+            background: #95a5a6;
+            text-decoration: line-through;
+        }
+
+        .task-count {
+            position: absolute;
+            bottom: 5px;
+            right: 8px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        /* CALENDAR STATS */
+        .calendar-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            border-top: 4px solid;
+        }
+
+        .stat-card.hoje { border-top-color: #3498db; }
+        .stat-card.semana { border-top-color: #27ae60; }
+        .stat-card.mes { border-top-color: #f39c12; }
+        .stat-card.vencendo { border-top-color: #e74c3c; }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* TASK MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .task-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-info h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .task-info p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .task-status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-completo {
+            background: #d5edda;
+            color: #155724;
+        }
+
+        .status-pendente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .calendar-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                min-height: auto;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 20px;
+            }
+            
+            .calendar-controls {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .calendar-navigation {
+                justify-content: center;
+            }
+            
+            .calendar-day {
+                min-height: 80px;
+                padding: 5px;
+            }
+            
+            .calendar-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .page-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .view-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calendar-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .calendar-day {
+                min-height: 60px;
+                padding: 3px;
+            }
+            
+            .day-number {
+                font-size: 14px;
+            }
+            
+            .task-indicator {
+                font-size: 9px;
+                padding: 1px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="{% url 'leaderboard:homepage' %}" style="text-decoration: none"><h2>TASKLY</h2></a>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{% url 'leaderboard:homepage' %}" class="nav-item">
+                <span>📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'task:listatarefas' %}" class="nav-item">
+                <span>📋</span>
+                <span>Tarefas</span>
+            </a>
+            <a href="{% url 'leaderboard:relatorio' %}" class="nav-item">
+                <span>📈</span>
+                <span>Relatórios</span>
+            </a>
+            <a href="{% url 'leaderboard:calendario' %}" class="nav-item active">
+                <span>📅</span>
+                <span>Calendário</span>
+            </a>
+            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
+                <span>🏆</span>
+                <span>Ranking</span>
+            </a>
+            <a href="{% url 'task:pomodoro' %}" class="nav-item">
+                <span>🍅</span>
+                <span>Pomodoro</span>
+            </a>
+            <a href="{% url 'leaderboard:ingressar_liga' %}" class="nav-item">
+                <span>🔑</span>
+                <span>Ingressar na Liga</span>
+            </a>
+            <a href="{% url 'leaderboard:minhas_ligas' %}" class="nav-item">
+                <span>👊</span>
+                <span>Minhas Ligas</span>
+            </a>
+            <a href="{% url 'leaderboard:criar_liga' %}" class="nav-item">
+                <span>🏆</span>
+                <span>Criar uma liga</span>
+            </a>
+            <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
+        </div>
+        
+        <div class="user-section">
+            <div class="user-item">
+                <div class="user-avatar-mini">
+                    {% if user.first_name %}
+                        {{ user.first_name.0|upper }}
+                    {% else %}
+                        {{ user.username.0|upper }}
+                    {% endif %}
+                </div>
+                <span>{{ user.get_full_name|default:user.username }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <div class="page-header">
+            <div class="header-left">
+                <h1>Calendário de Tarefas</h1>
+                <span class="calendar-tag">Calendário</span>
+            </div>
+            <div class="header-right">
+                <div class="user-avatar">{{ user_points|default:"0" }}</div>
+                <div class="user-info">
+                    <h3>{{ user.get_full_name|default:user.username }}</h3>
+                    <div class="user-points">Pontuação: {{ user_points|default:"0" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CALENDAR STATS -->
+        <div class="calendar-stats">
+            <div class="stat-card hoje">
+                <div class="stat-icon">📅</div>
+                <div class="stat-number">{{ tarefas_hoje|default:"0" }}</div>
+                <div class="stat-label">Tarefas Hoje</div>
+            </div>
+            <div class="stat-card semana">
+                <div class="stat-icon">📊</div>
+                <div class="stat-number">{{ tarefas_semana|default:"0" }}</div>
+                <div class="stat-label">Esta Semana</div>
+            </div>
+            <div class="stat-card mes">
+                <div class="stat-icon">📈</div>
+                <div class="stat-number">{{ tarefas_mes|default:"0" }}</div>
+                <div class="stat-label">Este Mês</div>
+            </div>
+            <div class="stat-card vencendo">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-number">{{ tarefas_vencendo|default:"0" }}</div>
+                <div class="stat-label">Vencendo Hoje</div>
+            </div>
+        </div>
+
+        <!-- CALENDAR CONTROLS -->
+        <div class="calendar-controls">
+            <div class="calendar-navigation">
+                <button class="nav-button" onclick="previousMonth()">‹</button>
+                <div class="current-month" id="currentMonth">{{ current_month_name }} {{ current_year }}</div>
+                <button class="nav-button" onclick="nextMonth()">›</button>
+            </div>
+            <div class="view-controls">
+                <button class="view-btn active" onclick="setView('month')">Mês</button>
+                <button class="view-btn" onclick="setView('week')">Semana</button>
+                <button class="view-btn" onclick="setView('today')" id="todayBtn">Hoje</button>
+            </div>
+        </div>
+
+        <!-- Grade do calendário -->
+        <div class="calendar-container">
+            <div class="calendar-grid">
+                <!-- Headers do calendário -->
+                <div class="calendar-header">Dom</div>
+                <div class="calendar-header">Seg</div>
+                <div class="calendar-header">Ter</div>
+                <div class="calendar-header">Qua</div>
+                <div class="calendar-header">Qui</div>
+                <div class="calendar-header">Sex</div>
+                <div class="calendar-header">Sab</div>
+                
+                <!-- Dias do calendário -->
+
+                {% for week in calendar_weeks %}
+                    {% for day in week %}
+                    <div class="calendar-day{% if day.other_month %} other-month{% endif %}{% if day.is_today %} today{% endif %}" 
+                         data-date="{{ day.date|date:'Y-m-d' }}" onclick="showDayTasks('{{ day.date|date:'Y-m-d' }}')">
+                        <div class="day-number">{{ day.day }}</div>
+                        
+                        {% for task in day.tasks %}
+                        <div class="task-indicator {{ task.categoria|lower }}{% if task.completo %} completed{% endif %}" 
+                             title="{{ task.titulo }}">
+                            {{ task.titulo|truncatechars:15 }}
+                        </div>
+                        {% endfor %}
+                        
+                        {% if day.task_count > 3 %}
+                        <div class="task-count">+{{ day.extra_tasks }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal das tarefas -->
+     
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Tarefas do Dia</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="task-list" id="taskList">
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let currentView = 'month';
+
+        // Marcar item ativo baseado na URL atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                const itemHref = item.getAttribute('href');
+                if (itemHref && itemHref === currentPath) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Navegação do calendário
+
+        function previousMonth() {
+            const currentMonth = parseInt("{{ current_month }}");
+            const currentYear = parseInt("{{ current_year }}");
+            let newMonth = currentMonth - 1;
+            let newYear = currentYear;
+    
+            if (newMonth < 1) {
+                newMonth = 12;
+                newYear = currentYear - 1;
+    }
+            window.location.href = `{% url 'leaderboard:calendario' %}?month=${newMonth}&year=${newYear}`;
+        }
+
+        function nextMonth() {
+            const currentMonth = parseInt("{{ current_month }}");
+            const currentYear = parseInt("{{ current_year }}");
+            let newMonth = currentMonth + 1;
+            let newYear = currentYear;
+    
+            if (newMonth > 12) {
+                newMonth = 1;
+                newYear = currentYear + 1;
+    }
+            window.location.href = `{% url 'leaderboard:calendario' %}?month=${newMonth}&year=${newYear}`;
+        }
+
+        function setView(view) {
+            if (view === 'today') {
+                const today = new Date();
+                window.location.href = `{% url 'leaderboard:calendario' %}?month=${today.getMonth()+1}&year=${today.getFullYear()}`;
+            }
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Funnções do modal de tarefas
+        function showDayTasks(date) {
+            const modal = document.getElementById('taskModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const taskList = document.getElementById('taskList');
+            
+            const [year, month, day] = date.split('-').map(Number);
+            const localDate = new Date(year, month - 1, day);
+            
+            const displayDate = localDate.toLocaleDateString('pt-BR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+    });
+            
+            modalTitle.textContent = `Tarefas de ${displayDate}`;
+
+            taskList.innerHTML = '<div style="text-align: center; padding: 20px; color: #7f8c8d;">Carregando tarefas...</div>';
+            
+            fetch(`{% url 'leaderboard:get_day_tasks' %}?date=${date}`)
+               .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na resposta do servidor');
+                    }
+            return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        taskList.innerHTML = `<div style="text-align: center; padding: 20px; color: #e74c3c;">Erro: ${data.error}</div>`;
+                        return;
+                    }
+            
+                    if (data.tasks.length === 0) {
+                        taskList.innerHTML = '<div style="text-align: center; padding: 20px; color: #7f8c8d;">Nenhuma tarefa encontrada para este dia.</div>';
+                        return;
+                    }
+                    
+                    let tasksHtml = '';
+                    data.tasks.forEach(task => {
+                        const statusClass = task.completo ? 'status-completo' : 'status-pendente';
+                        const statusText = task.completo ? 'Completa' : 'Pendente';
+                        
+                        tasksHtml += `
+                            <div class="task-item">
+                                <div class="task-info">
+                                    <h4>${task.titulo}</h4>
+                                    <p>${task.descricao}</p>
+                                    <small>Categoria: ${task.categoria} | Criada às ${task.criado_em}</small>
+                                    ${task.data_vencimento ? `<br><small>Vence em: ${task.data_vencimento}</small>` : ''}
+                                </div>
+                                <div class="task-status ${statusClass}">${statusText}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    taskList.innerHTML = tasksHtml;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar tarefas:', error);
+                    taskList.innerHTML = '<div style="text-align: center; padding: 20px; color: #e74c3c;">Erro ao carregar tarefas.</div>';
+                });
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal').style.display = 'none';
+        }
+
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('taskModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Logout
+        function logout() {
+            fetch("{% url 'task:logout' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            });
+        }
+
+        // Navegação pelo teclado dentro do modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                previousMonth();
+            } else if (e.key === 'ArrowRight') {
+                nextMonth();
+            } else if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

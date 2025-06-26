@@ -479,7 +479,7 @@
                 <span>📈</span>
                 <span>Relatórios</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'leaderboard:calendario' %}" class="nav-item">
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
@@ -490,6 +490,18 @@
             <a href="{% url 'task:pomodoro' %}" class="nav-item">
                 <span>🍅</span>
                 <span>Pomodoro</span>
+            </a>
+            <a href="{% url 'leaderboard:ingressar_liga' %}" class="nav-item">
+                <span>🔑</span>
+                <span>Ingressar na Liga</span>
+            </a>
+            <a href="{% url 'leaderboard:minhas_ligas' %}" class="nav-item">
+                <span>👊</span>
+                <span>Minhas Ligas</span>
+            </a>
+            <a href="{% url 'leaderboard:criar_liga' %}" class="nav-item">
+                <span>🏆</span>
+                <span>Criar uma liga</span>
             </a>
             <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
@@ -558,11 +570,13 @@
                 </div>
                 
                 <div class="productivity-info">
-                    <div class="productivity-score">{{ productivity_score|default:"75" }}%</div>
-                    <div class="productivity-label">de comprometimento</div>
-                    
+                    <div class="productivity-score">
+                        {{ percentual_conclusao|default:"0" }}%
+                    </div>
+                    <div class="productivity-label">das tarefas concluídas</div>
+
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{ productivity_score|default:'75' }}%"></div>
+                        <div class="progress-fill" style="width: {{ percentual_conclusao|default:"0" }}%"></div>
                     </div>
                 </div>
 
@@ -576,9 +590,13 @@
                         <div class="stat-label">Atrasadas</div>
                     </div>
                     <div class="stat-item concluidas">
-                        <div class="stat-value" data-target="{{ percentual_conclusao|default:'0' }}">0</div>
-                        <div class="stat-label">% Concluídas</div>
+                    <div class="stat-value" data-target="{{ total_tarefas_concluidas|default:'0' }}">
+                        {{ total_tarefas_concluidas|default:'0' }}
                     </div>
+                    <div class="stat-label">
+                        Concluídas ({{ percentual_conclusao|default:'0' }}%)
+                    </div>
+                </div>
                 </div>
             </div>
         </div>

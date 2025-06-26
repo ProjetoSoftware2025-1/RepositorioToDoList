@@ -1,6 +1,6 @@
 from django.shortcuts import render, reverse, get_object_or_404, redirect
 from django.views.generic import TemplateView, ListView, CreateView, FormView, UpdateView, RedirectView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .models import Task
 from .forms import TarefaForm, ConcluirTarefaForm, CadastrarUsuario
@@ -8,9 +8,18 @@ import logging
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.contrib import messages
+import datetime
 from datetime import date
 from django.db.models import Q
 from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import UpdateView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import update_session_auth_hash
+from .forms import AtualizarPerfilForm
+from leaderboard.models import Competidor, Participacao
 
 
 logger = logging.getLogger(__name__)
@@ -24,14 +33,17 @@ class ListarTarefa(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         hoje = date.today()
+        start_of_week = hoje - datetime.timedelta(days=hoje.weekday())
+        end_of_week = start_of_week + datetime.timedelta(days=6)
 
         # Todas as tarefas do usuário
         todas_tarefas = Task.objects.filter(user=user)
 
         # Listas fixas
-        context['lista_tarefas_do_dia'] = todas_tarefas.filter(data_vencimento=hoje)
+        context['lista_tarefas_do_dia'] = todas_tarefas.filter(data_vencimento=hoje, completo=False)
         context['lista_tarefas_atrasadas'] = todas_tarefas.filter(data_vencimento__lt=hoje, completo=False)
         context['lista_tarefas_afazer'] = todas_tarefas.filter(completo=False)
+        context['lista_tarefas_da_semana'] = todas_tarefas.filter(data_vencimento__range=[start_of_week, end_of_week], completo=False).order_by('data_vencimento')
 
         # Totais por categoria
         context['total_tarefas_afazer'] = todas_tarefas.filter(completo=False).count()
@@ -92,12 +104,23 @@ class AtualizarTarefa(UpdateView):
     def get_success_url(self):
         return reverse('task:listatarefas')
 
-class ExcluirTarefa(DeleteView):
-    template_name = "listatarefas.html"
+class ExcluirTarefa(LoginRequiredMixin, DeleteView):
+    template_name = "confirmarexclusao.html"
     model = Task
 
     def get_success_url(self):
         return reverse('task:listatarefas')
+
+# class ConcluirTarefa(LoginRequiredMixin, UpdateView):
+#     model = Task
+#     form_class = ConcluirTarefaForm
+#     template_name = "confirmarconclusao.html"
+#     success_url = reverse_lazy("task:listatarefas")
+
+#     def get_initial(self):
+#         initial = super().get_initial()
+#         initial['completo'] = True
+#         return initial
 
 class ConcluirTarefa(LoginRequiredMixin, UpdateView):
     model = Task
@@ -109,6 +132,25 @@ class ConcluirTarefa(LoginRequiredMixin, UpdateView):
         initial = super().get_initial()
         initial['completo'] = True
         return initial
+
+    def form_valid(self, form):
+        # Marcar a tarefa como concluída
+        response = super().form_valid(form)
+
+        # Buscar o competidor correspondente ao usuário logado
+        try:
+            competidor = self.request.user.competidor
+        except Competidor.DoesNotExist:
+            competidor = None
+
+        # Se for um competidor, incrementar pontuação em todas as ligas
+        if competidor:
+            participacoes = Participacao.objects.filter(competidor=competidor)
+            for participacao in participacoes:
+                participacao.pontuacao += 1
+                participacao.save()
+
+        return response
 
 class Login(LoginView):
     template_name = 'login.html'
@@ -148,3 +190,41 @@ class SairView(LogoutView):
     
 class Pomodoro(TemplateView):
     template_name= 'pomodoro.html'
+
+
+class AtualizarPerfil(LoginRequiredMixin, FormView):
+    template_name = 'atualizarperfil.html'
+    form_class = AtualizarPerfilForm
+    success_url = reverse_lazy('leaderboard:dashboard')
+
+    def get_initial(self):
+        return {
+            'username': self.request.user.username,
+            'email': self.request.user.email,
+        }
+
+    def form_valid(self, form):
+        user = self.request.user
+        data = form.cleaned_data
+
+        # Só atualiza os campos se foram preenchidos
+        if data.get('username'):
+            user.username = data['username']
+
+        if data.get('email'):
+            user.email = data['email']
+
+        if data.get('nova_senha') and data.get('confirmar_senha'):
+            if data['nova_senha'] == data['confirmar_senha']:
+                user.set_password(data['nova_senha'])
+            else:
+                messages.error(self.request, 'As senhas não coincidem.')
+                return self.form_invalid(form)
+
+        user.save()
+        messages.success(self.request, 'Seus dados foram atualizados com sucesso.')
+        return redirect(self.success_url)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Por favor, corrija os erros abaixo.')
+        return super().form_invalid(form)

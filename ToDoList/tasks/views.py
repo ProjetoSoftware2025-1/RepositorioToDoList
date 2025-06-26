@@ -93,6 +93,22 @@ class CriarTarefa(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('task:listatarefas')
 
+class VisualizarTarefa (LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = "visualizartarefa.html"
+    model = Task
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        task_id = self.kwargs.get('pk')
+        task = get_object_or_404(Task, pk=task_id)
+        context['task'] = task
+
+    def test_func(self):
+        """Garante que o usuário só pode ver suas próprias tarefas"""
+        task_id = self.kwargs.get('pk')
+        task = get_object_or_404(Task, pk=task_id)
+        return task.user == self.request.user
+
 class AtualizarTarefa(UpdateView):
     template_name = "atualizartarefa.html"
     form_class = TarefaForm

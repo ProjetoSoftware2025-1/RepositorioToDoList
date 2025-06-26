@@ -218,12 +218,12 @@
         {% csrf_token %}
         {{ form }}
         <div class="button-group">
-            <button type="submit">Salvar Alterações</button>
-            <a href="{% url 'task:listatarefas' %}" class="btn-secondary">Cancelar</a>
             {% if object.completo == False %}
+            <button type="submit">Salvar Alterações</button>
             <a href="{% url 'task:concluirtarefa' pk=object.id %}" class="btn-concluir">Concluir</a>
-            <a href="{% url 'task:excluirtarefa' pk=object.id %}" class="btn-concluir" style="background-color: #d32f2f">Excluir</a>
             {% endif %}
+            <a href="{% url 'task:excluirtarefa' pk=object.id %}" class="btn-concluir" style="background-color: #d32f2f">Excluir</a>
+            <a href="{% url 'task:listatarefas' %}" class="btn-secondary">Cancelar</a>
         </div>
     </form>
 

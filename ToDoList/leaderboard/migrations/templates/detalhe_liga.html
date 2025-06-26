@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskly - Calendário</title>
+    <title>Taskly - {{ liga.nome }}</title>
     <style>
         * {
             margin: 0;
@@ -582,10 +582,86 @@
                 padding: 1px 4px;
             }
         }
+        .league-detail-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border-top: 4px solid #3498db;
+        }
+        
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .detail-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .detail-meta {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+        
+        .participants-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .participant-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .participant-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .participant-avatar {
+            width: 40px;
+            height: 40px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
-    <!-- SIDEBAR -->
+
     <div class="sidebar">
         <div class="sidebar-header">
             <a href="{% url 'leaderboard:homepage' %}" style="text-decoration: none"><h2>TASKLY</h2></a>
@@ -604,7 +680,7 @@
                 <span>📈</span>
                 <span>Relatórios</span>
             </a>
-            <a href="{% url 'leaderboard:calendario' %}" class="nav-item active">
+            <a href="{% url 'leaderboard:calendario' %}" class="nav-item">
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
@@ -620,7 +696,7 @@
                 <span>🔑</span>
                 <span>Ingressar na Liga</span>
             </a>
-            <a href="{% url 'leaderboard:minhas_ligas' %}" class="nav-item">
+            <a href="{% url 'leaderboard:minhas_ligas' %}" class="nav-item active">
                 <span>👊</span>
                 <span>Minhas Ligas</span>
             </a>
@@ -645,247 +721,76 @@
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main-content">
-        <!-- HEADER -->
         <div class="page-header">
             <div class="header-left">
-                <h1>Calendário de Tarefas</h1>
-                <span class="calendar-tag">Calendário</span>
+                <h1>Detalhes da Liga</h1>
+                <span class="calendar-tag">Competição</span>
             </div>
-            <div class="header-right">
-                <div class="user-avatar">{{ user_points|default:"0" }}</div>
-                <div class="user-info">
-                    <h3>{{ user.get_full_name|default:user.username }}</h3>
-                    <div class="user-points">Pontuação: {{ user_points|default:"0" }}</div>
+        </div>
+
+        <div class="league-detail-card">
+            <div class="detail-header">
+                <h2 class="detail-title">{{ liga.nome }}</h2>
+                <div class="league-code" style="font-size: 16px;">
+                    <strong>Código:</strong> {{ liga.codigo_convite }}
                 </div>
             </div>
+            
+            <div class="detail-meta">
+                <div class="meta-item">
+                    <strong>Início:</strong> {{ liga.data_inicio|date:"d/m/Y" }}
+                </div>
+                <div class="meta-item">
+                    <strong>Término:</strong> {{ liga.data_fim|date:"d/m/Y" }}
+                </div>
+                <div class="meta-item">
+                    <strong>Participantes:</strong> {{ participacoes|length }}
+                </div>
+            </div>
+            
+            <p>{{ liga.descricao|default:"Esta liga não possui descrição." }}</p>
         </div>
 
-        <!-- CALENDAR STATS -->
-        <div class="calendar-stats">
-            <div class="stat-card hoje">
-                <div class="stat-icon">📅</div>
-                <div class="stat-number">{{ tarefas_hoje|default:"0" }}</div>
-                <div class="stat-label">Tarefas Hoje</div>
+        <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; margin-bottom: 20px;">Classificação</h3>
+            
+            <ul class="participants-list">
+    {% for participacao in participacoes %}
+    <li class="participant-item">
+        <div class="participant-info">
+            <div class="participant-avatar">
+                {{ participacao.competidor.usuario.first_name.0|default:"U" }}
             </div>
-            <div class="stat-card semana">
-                <div class="stat-icon">📊</div>
-                <div class="stat-number">{{ tarefas_semana|default:"0" }}</div>
-                <div class="stat-label">Esta Semana</div>
-            </div>
-            <div class="stat-card mes">
-                <div class="stat-icon">📈</div>
-                <div class="stat-number">{{ tarefas_mes|default:"0" }}</div>
-                <div class="stat-label">Este Mês</div>
-            </div>
-            <div class="stat-card vencendo">
-                <div class="stat-icon">⚠️</div>
-                <div class="stat-number">{{ tarefas_vencendo|default:"0" }}</div>
-                <div class="stat-label">Vencendo Hoje</div>
+            <div>
+                <strong>
+                    {{ forloop.counter }}º 
+                    {{ participacao.competidor.usuario.get_full_name|default:participacao.competidor.usuario.username }}
+                    {% if forloop.first %} 👑{% endif %}
+                </strong>
+                <div style="font-size: 14px; color: #7f8c8d;">@{{ participacao.competidor.usuario.username }}</div>
             </div>
         </div>
-
-        <!-- CALENDAR CONTROLS -->
-        <div class="calendar-controls">
-            <div class="calendar-navigation">
-                <button class="nav-button" onclick="previousMonth()">‹</button>
-                <div class="current-month" id="currentMonth">{{ current_month_name }} {{ current_year }}</div>
-                <button class="nav-button" onclick="nextMonth()">›</button>
-            </div>
-            <div class="view-controls">
-                <button class="view-btn active" onclick="setView('month')">Mês</button>
-                <button class="view-btn" onclick="setView('week')">Semana</button>
-                <button class="view-btn" onclick="setView('today')" id="todayBtn">Hoje</button>
-            </div>
+        <div style="font-weight: bold; color: #2c3e50;">
+            {{ participacao.pontuacao }} pts
+        </div>
+    </li>
+    {% empty %}
+    <li style="text-align: center; padding: 30px; color: #7f8c8d;">
+        Nenhum participante nesta liga
+    </li>
+    {% endfor %}
+</ul>
         </div>
 
-        <!-- Grade do calendário -->
-        <div class="calendar-container">
-            <div class="calendar-grid">
-                <!-- Headers do calendário -->
-                <div class="calendar-header">Dom</div>
-                <div class="calendar-header">Seg</div>
-                <div class="calendar-header">Ter</div>
-                <div class="calendar-header">Qua</div>
-                <div class="calendar-header">Qui</div>
-                <div class="calendar-header">Sex</div>
-                <div class="calendar-header">Sab</div>
-                
-                <!-- Dias do calendário -->
-
-                {% for week in calendar_weeks %}
-                    {% for day in week %}
-                    <div class="calendar-day{% if day.other_month %} other-month{% endif %}{% if day.is_today %} today{% endif %}" 
-                         data-date="{{ day.date|date:'Y-m-d' }}" onclick="showDayTasks('{{ day.date|date:'Y-m-d' }}')">
-                        <div class="day-number">{{ day.day }}</div>
-                        
-                        {% for task in day.tasks %}
-                        <div class="task-indicator {{ task.categoria|lower }}{% if task.completo %} completed{% endif %}" 
-                             title="{{ task.titulo }}">
-                            {{ task.titulo|truncatechars:15 }}
-                        </div>
-                        {% endfor %}
-                        
-                        {% if day.task_count > 3 %}
-                        <div class="task-count">+{{ day.extra_tasks }}</div>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                {% endfor %}
-            </div>
+        <div style="margin-top: 30px;">
+            <a href="{% url 'leaderboard:minhas_ligas' %}" class="back-link">
+                ← Voltar para minhas ligas
+            </a>
         </div>
     </div>
-
-    <!-- Modal das tarefas -->
-     
-    <div id="taskModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Tarefas do Dia</h2>
-                <span class="close" onclick="closeModal()">&times;</span>
-            </div>
-            <div class="task-list" id="taskList">
-
-            </div>
-        </div>
-    </div>
-
     <script>
-        let currentDate = new Date();
-        let currentView = 'month';
-
-        // Marcar item ativo baseado na URL atual
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentPath = window.location.pathname;
-            const navItems = document.querySelectorAll('.nav-item');
-            
-            navItems.forEach(item => {
-                item.classList.remove('active');
-                const itemHref = item.getAttribute('href');
-                if (itemHref && itemHref === currentPath) {
-                    item.classList.add('active');
-                }
-            });
-        });
-
-        // Navegação do calendário
-
-        function previousMonth() {
-            const currentMonth = parseInt("{{ current_month }}");
-            const currentYear = parseInt("{{ current_year }}");
-            let newMonth = currentMonth - 1;
-            let newYear = currentYear;
-    
-            if (newMonth < 1) {
-                newMonth = 12;
-                newYear = currentYear - 1;
-    }
-            window.location.href = `{% url 'leaderboard:calendario' %}?month=${newMonth}&year=${newYear}`;
-        }
-
-        function nextMonth() {
-            const currentMonth = parseInt("{{ current_month }}");
-            const currentYear = parseInt("{{ current_year }}");
-            let newMonth = currentMonth + 1;
-            let newYear = currentYear;
-    
-            if (newMonth > 12) {
-                newMonth = 1;
-                newYear = currentYear + 1;
-    }
-            window.location.href = `{% url 'leaderboard:calendario' %}?month=${newMonth}&year=${newYear}`;
-        }
-
-        function setView(view) {
-            if (view === 'today') {
-                const today = new Date();
-                window.location.href = `{% url 'leaderboard:calendario' %}?month=${today.getMonth()+1}&year=${today.getFullYear()}`;
-            }
-            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-
-        // Funnções do modal de tarefas
-        function showDayTasks(date) {
-            const modal = document.getElementById('taskModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const taskList = document.getElementById('taskList');
-            
-            const [year, month, day] = date.split('-').map(Number);
-            const localDate = new Date(year, month - 1, day);
-            
-            const displayDate = localDate.toLocaleDateString('pt-BR', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-    });
-            
-            modalTitle.textContent = `Tarefas de ${displayDate}`;
-
-            taskList.innerHTML = '<div style="text-align: center; padding: 20px; color: #7f8c8d;">Carregando tarefas...</div>';
-            
-            fetch(`{% url 'leaderboard:get_day_tasks' %}?date=${date}`)
-               .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro na resposta do servidor');
-                    }
-            return response.json();
-                })
-                .then(data => {
-                    if (data.error) {
-                        taskList.innerHTML = `<div style="text-align: center; padding: 20px; color: #e74c3c;">Erro: ${data.error}</div>`;
-                        return;
-                    }
-            
-                    if (data.tasks.length === 0) {
-                        taskList.innerHTML = '<div style="text-align: center; padding: 20px; color: #7f8c8d;">Nenhuma tarefa encontrada para este dia.</div>';
-                        return;
-                    }
-                    
-                    let tasksHtml = '';
-                    data.tasks.forEach(task => {
-                        const statusClass = task.completo ? 'status-completo' : 'status-pendente';
-                        const statusText = task.completo ? 'Completa' : 'Pendente';
-                        
-                        tasksHtml += `
-                            <div class="task-item">
-                                <div class="task-info">
-                                    <h4>${task.titulo}</h4>
-                                    <p>${task.descricao}</p>
-                                    <small>Categoria: ${task.categoria} | Criada às ${task.criado_em}</small>
-                                    ${task.data_vencimento ? `<br><small>Vence em: ${task.data_vencimento}</small>` : ''}
-                                </div>
-                                <div class="task-status ${statusClass}">${statusText}</div>
-                            </div>
-                        `;
-                    });
-                    
-                    taskList.innerHTML = tasksHtml;
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar tarefas:', error);
-                    taskList.innerHTML = '<div style="text-align: center; padding: 20px; color: #e74c3c;">Erro ao carregar tarefas.</div>';
-                });
-            
-            modal.style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('taskModal').style.display = 'none';
-        }
-
-        // Fechar modal ao clicar fora dele
-        window.onclick = function(event) {
-            const modal = document.getElementById('taskModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        // Logout
-        function logout() {
+           function logout() {
             fetch("{% url 'task:logout' %}", {
                 method: "POST",
                 headers: {
@@ -898,17 +803,6 @@
                 }
             });
         }
-
-        // Navegação pelo teclado dentro do modal
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowLeft') {
-                previousMonth();
-            } else if (e.key === 'ArrowRight') {
-                nextMonth();
-            } else if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
     </script>
 </body>
 </html>

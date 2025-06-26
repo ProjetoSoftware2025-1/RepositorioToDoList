@@ -1,7 +1,7 @@
 import json
-import datetime
+from datetime import datetime, date
 import calendar
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from tasks.models import Task
 from collections import defaultdict
@@ -10,8 +10,12 @@ from django.http import JsonResponse
 from django.utils import timezone
 from datetime import timedelta, datetime
 from django.contrib.auth.models import User
-from django.shortcuts import render
 from django.http import HttpResponse
+from .forms import LigaForm
+from .models import Competidor, Participacao, Liga
+from django.contrib import messages
+from .forms import IngressoLigaForm
+from tasks.models import Task
 
 # Create your views here.
 class Homepage(ListView):
@@ -248,3 +252,112 @@ def get_day_tasks(request):
 
     
     return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+def criar_liga(request):
+    if request.method == 'POST':
+        form = LigaForm(request.POST)
+        if form.is_valid():
+            liga = form.save()
+
+            # Garante que o usuário tenha um perfil Competidor
+            competidor, created = Competidor.objects.get_or_create(usuario=request.user)
+
+            # Cria a participação do criador na liga
+            Participacao.objects.create(
+                competidor=competidor,
+                liga=liga,
+                pontuacao=0  # opcional
+            )
+
+            return redirect('leaderboard:detalhe_liga', liga_id=liga.id)
+    else:
+        form = LigaForm()
+
+    return render(request, 'criar_liga.html', {'form': form})
+
+@login_required
+def minhas_ligas(request):
+    try:
+        competidor = request.user.competidor
+        ligas = competidor.ligas.all()  # relacionamento ManyToMany
+    except Competidor.DoesNotExist:
+        ligas = []
+
+    return render(request, 'minhas_ligas.html', {'ligas': ligas})
+
+@login_required
+def detalhe_liga(request, liga_id):
+    liga = get_object_or_404(Liga, id=liga_id)
+
+    # Participações da liga ordenadas por pontuação decrescente
+    participacoes = liga.participacoes.order_by('-pontuacao')
+
+    return render(request, 'detalhe_liga.html', {
+        'liga': liga,
+        'participacoes': participacoes,
+    })
+
+
+@login_required
+def ingressar_liga(request):
+    if request.method == 'POST':
+        form = IngressoLigaForm(request.POST)
+        if form.is_valid():
+            codigo = form.cleaned_data['codigo_convite'].strip().upper()
+
+            # Tenta encontrar a liga pelo código
+            liga = get_object_or_404(Liga, codigo_convite=codigo)
+
+            # Garante que o usuário seja um competidor
+            competidor, _ = Competidor.objects.get_or_create(usuario=request.user)
+
+            # Verifica se já participa
+            if Participacao.objects.filter(competidor=competidor, liga=liga).exists():
+                messages.info(request, f"Você já participa da liga '{liga.nome}'.")
+            else:
+                Participacao.objects.create(competidor=competidor, liga=liga)
+                messages.success(request, f"Você entrou na liga '{liga.nome}' com sucesso!")
+
+            return redirect('leaderboard:detalhe_liga', liga_id=liga.id)
+    else:
+        form = IngressoLigaForm()
+
+    return render(request, 'ingressar_liga.html', {'form': form})
+
+def relatorio_view(request):
+    hoje = date.today()
+    inicio_semana = hoje - timedelta(days=hoje.weekday())
+
+    tarefas_usuario = Task.objects.filter(user=request.user)
+
+    # Contagens
+
+    total_tarefas_concluidas_hoje = tarefas_usuario.filter(completo=True, criado_em__date=hoje).count()
+    total_tarefas_concluidas_semana = tarefas_usuario.filter(completo=True, criado_em__date__gte=inicio_semana).count()
+    total_tarefas_concluidas = tarefas_usuario.filter(completo=True).count()
+
+    total_tarefas_criadas = tarefas_usuario.count()
+    total_tarefas_em_progresso = tarefas_usuario.filter(completo=False, data_vencimento__gte=hoje).count()
+    total_tarefas_atrasadas = tarefas_usuario.filter(completo=False, data_vencimento__lt=hoje).count()
+    
+    total_tarefas_trabalho = tarefas_usuario.filter(categoria__iexact='Trabalho').count()
+    total_tarefas_estudos = tarefas_usuario.filter(categoria__iexact='Estudos').count()
+    total_tarefas_pessoal = tarefas_usuario.filter(categoria__iexact='Pessoal').count()
+
+    percentual_conclusao = 0
+    if total_tarefas_criadas > 0:
+        percentual_conclusao = int((total_tarefas_concluidas / total_tarefas_criadas) * 100)
+
+    context = {
+        'total_tarefas_concluidas_hoje': total_tarefas_concluidas_hoje,
+        'total_tarefas_concluidas_semana': total_tarefas_concluidas_semana,
+        'total_tarefas_concluidas': total_tarefas_concluidas,
+        'total_tarefas_afazer': total_tarefas_em_progresso,
+        'total_tarefas_atrasadas': total_tarefas_atrasadas,
+        'percentual_conclusao': percentual_conclusao,
+        'total_tarefas_trabalho': total_tarefas_trabalho,
+        'total_tarefas_estudos': total_tarefas_estudos,
+        'total_tarefas_pessoal': total_tarefas_pessoal
+    }
+
+    return render(request, 'relatorio.html', context)

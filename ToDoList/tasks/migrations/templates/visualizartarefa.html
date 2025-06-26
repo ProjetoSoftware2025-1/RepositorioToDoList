@@ -537,7 +537,7 @@
 
                 <div class="info-item">
                     <span class="info-label">Prazo:</span>
-                    <span class="info-value">{{ task.data_vencimento|date:"d/m/Y H:i"|default:"Hoje, 17:00" }}</span>
+                    <span class="info-value">{{ task.data_vencimento|date:"d/m/Y"|default:"Hoje, 17:00" }}</span>
                 </div>
 
                 <div class="info-item">
@@ -558,8 +558,8 @@
                 <div class="info-item">
                     <span class="info-label">Status:</span>
                     <span class="info-value">
-                        <span class="status-badge {% if task.status == 'CONCLUIDA' %}status-completed{% elif task.status == 'EM_PROGRESSO' %}status-progress{% else %}status-pending{% endif %}">
-                            {% if task.status == 'CONCLUIDA' %}
+                        <span class="status-badge {% if task.completo == 1 %}status-completed{% elif task.status == 'EM_PROGRESSO' %}status-progress{% else %}status-pending{% endif %}">
+                            {% if task.completo == 1 %}
                                 ✅ Concluída
                             {% elif task.status == 'EM_PROGRESSO' %}
                                 🔄 Em Progresso
@@ -574,7 +574,7 @@
                     <span class="info-label">Descrição:</span>
                     <div class="info-value">
                         <div class="description-box">
-                            {{ task.descricao|default:"O relatório de vendas do período analisado apresenta o total de R$ 25.000 em receitas, com 320 unidades vendidas. O produto mais vendido foi o 'Kit Profissional', representando 40% das vendas. Houve um aumento de 15% em relação ao mês anterior. As vendas online corresponderam a 70% do total." }}
+                            {{ task.descricao }}
                         </div>
                     </div>
                 </div>
@@ -584,11 +584,11 @@
                 <a href="{% url 'task:listatarefas' %}" class="btn btn-back">
                     ← Voltar
                 </a>
-
-                <a href="#" class="btn btn-edit">
+                {% if task.completo == 0 %}
+                <a href="{% url 'task:atualizartarefa' task.pk %}" class="btn btn-edit">
                     ✏️ Atualizar
                 </a>
-
+                {% endif %}
             </div>
         </div>
     </div>

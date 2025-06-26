@@ -2,8 +2,28 @@ from django import forms
 from .models import Task
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+import datetime
 
 class TarefaForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Verifica se o formulário está sendo inicializado com uma instância de objeto
+        if self.instance and self.instance.data_vencimento:
+            valor_data_db = self.instance.data_vencimento
+
+            # Se o valor for uma string no formato 'd/m/y', converta para o formato correto.
+            # Se for um objeto date, isso não fará nada (o que é bom).
+            if isinstance(valor_data_db, str):
+                try:
+                    # Converte a string 'd/m/y' para um objeto de data do Python
+                    data_convertida = datetime.datetime.strptime(valor_data_db, '%d/%m/%Y').date()
+                    # Define o valor inicial do campo do formulário
+                    # Isso garante que o formulário renderize a data corretamente
+                    self.initial['data_vencimento'] = data_convertida
+                except ValueError:
+                    # Se a string não estiver no formato esperado, ignore para evitar um erro fatal.
+                    print(f"Erro de formato de data no DB: '{valor_data_db}'")
     class Meta:
         model = Task
         fields = ['titulo', 'descricao', 'data_vencimento', 'categoria']

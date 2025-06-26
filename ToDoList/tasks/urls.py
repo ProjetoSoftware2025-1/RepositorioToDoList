@@ -16,7 +16,7 @@ urlpatterns = [
     path('logout/', SairView.as_view(next_page='task:login'), name='logout'),
     path('pomodoro/', Pomodoro.as_view(), name='pomodoro'),
     path('editarperfil/', AtualizarPerfil.as_view(), name='editarperfil'),
-    path('visualizartarefa/<int:pk>', VisualizarTarefa.as_view(), name = 'visualizartarefa'),
+    path('visualizartarefa/<int:pk>', VisualizarTarefa.as_view(), name='visualizartarefa'),
     
     # path('password-reset/', auth_view.PasswordResetView.as_view(template_name='registration/password_reset.html'), name='password_reset'),
 ]

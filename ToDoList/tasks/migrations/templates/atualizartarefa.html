@@ -213,17 +213,45 @@
     </style>
 </head>
 <body>
+    <body>
     <form method="post">
         <h1>Editar Tarefa</h1>
         {% csrf_token %}
-        {{ form }}
+
+        {% if form.non_field_errors %}
+            <div class="errorlist">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <p>
+            <label for="{{ form.titulo.id_for_label }}">{{ form.titulo.label }}</label>
+            {{ form.titulo }}
+            {{ form.titulo.errors }}
+        </p>
+
+        <p>
+            <label for="{{ form.descricao.id_for_label }}">{{ form.descricao.label }}</label>
+            {{ form.descricao }}
+            {{ form.descricao.errors }}
+        </p>
+
+        <p>
+            <label for="{{ form.data_vencimento.id_for_label }}">{{ form.data_vencimento.label }}</label>
+            {{ form.data_vencimento }}
+            {{ form.data_vencimento.errors }}
+        </p>
+
+        <p>
+            {{ form.categoria }} </p>
+
         <div class="button-group">
             {% if object.completo == False %}
             <button type="submit">Salvar Alterações</button>
             <a href="{% url 'task:concluirtarefa' pk=object.id %}" class="btn-concluir">Concluir</a>
             {% endif %}
             <a href="{% url 'task:excluirtarefa' pk=object.id %}" class="btn-concluir" style="background-color: #d32f2f">Excluir</a>
-            <a href="{% url 'task:listatarefas' %}" class="btn-secondary">Cancelar</a>
+            <a href="{% url 'task:visualizartarefa' task.pk %}" class="btn-secondary">Cancelar</a>
         </div>
     </form>
 

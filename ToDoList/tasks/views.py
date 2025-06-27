@@ -1,9 +1,9 @@
 from django.shortcuts import render, reverse, get_object_or_404, redirect
-from django.views.generic import TemplateView, ListView, CreateView, FormView, UpdateView, RedirectView, DeleteView
+from django.views.generic import TemplateView, ListView, CreateView, FormView, UpdateView, RedirectView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .models import Task
-from .forms import TarefaForm, ConcluirTarefaForm, CadastrarUsuario
+from .forms import TarefaForm, EditarTarefaForm, ConcluirTarefaForm, CadastrarUsuario
 import logging
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
@@ -93,9 +93,16 @@ class CriarTarefa(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('task:listatarefas')
 
+class VisualizarTarefa (LoginRequiredMixin, DetailView):
+    template_name = "visualizartarefa.html"
+    model = Task
+    context_object_name = "task"
+
+
+
 class AtualizarTarefa(UpdateView):
     template_name = "atualizartarefa.html"
-    form_class = TarefaForm
+    form_class = EditarTarefaForm
     model = Task
 
     def form_valid(self, form):

@@ -680,7 +680,7 @@
             <button onclick="limparFiltro()" style="position: absolute; color: rgb(168, 6, 6); top: 10px; right: 10px; border: none; background: transparent; font-size: 20px; cursor: pointer;">✖</button>
             <h2 class="section-title">Resultado da Pesquisa</h2>
             {% for tarefa in resultado_filtro %}
-            <a href="{% url 'task:atualizartarefa' pk=tarefa.id %}" class="task-item">
+            <a href="{% url 'task:visualizartarefa' pk=tarefa.id %}" class="task-item">
                 <div class="task-header">
                     <div class="task-title">{{ tarefa.titulo }}</div>
                     <div class="task-category trabalho">{{ tarefa.categoria }}</div>
@@ -701,7 +701,7 @@
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas de Hoje</h2>
                 {% for task in lista_tarefas_do_dia %}
-                <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item today">
+                <a href="{% url 'task:visualizartarefa' pk=task.id %}" class="task-item today">
                     <div class="task-header">
                         <div class="task-title">{{ task.titulo }}</div>
                         <div class="task-category trabalho">{{ task.categoria }}</div>
@@ -715,7 +715,7 @@
             <div class="tasks-column">
                 <h2 class="section-title">Tarefas Atrasadas</h2>
                 {% for task in lista_tarefas_atrasadas %}
-                <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item overdue">
+                <a href="{% url 'task:visualizartarefa' pk=task.id %}" class="task-item overdue">
                     <div class="task-header">
                         <div class="task-title">{{ task.titulo }}</div>
                         <div class="task-category administrativo">{{ task.categoria }}</div>
@@ -730,7 +730,7 @@
         <div class="full-width-section">
             <h2 class="section-title">Tarefas da Semana</h2>
             {% for task in lista_tarefas_da_semana %}
-            <a href="{% url 'task:atualizartarefa' pk=task.id %}" class="task-item weekly">
+            <a href="{% url 'task:visualizartarefa' pk=task.id %}" class="task-item weekly">
                 <div class="task-header">
                     <div class="task-title">{{ task.titulo }}</div>
                     <div class="task-category trabalho">{{ task.categoria }}</div>

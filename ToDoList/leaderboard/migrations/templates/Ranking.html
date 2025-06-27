@@ -101,11 +101,13 @@
         }
 
         .user-item {
-            display: flex;
+             display: flex;
             align-items: center;
             padding: 10px;
             background: #34495e;
             border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
         }
 
         .user-avatar-mini {
@@ -419,7 +421,7 @@
         </div>
         
         <div class="user-section">
-            <div class="user-item">
+           <a href="{% url 'task:atualizarperfil' %}" class="user-item">    
                 <div class="user-avatar-mini">
                     {% if user.first_name %}
                         {{ user.first_name.0|upper }}
@@ -428,6 +430,7 @@
                     {% endif %}
                 </div>
                 <span>{{ user.get_full_name|default:user.username }}</span>
+            </a>
             </div>
         </div>
     </div>

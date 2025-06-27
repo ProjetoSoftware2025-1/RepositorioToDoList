@@ -144,3 +144,5 @@ MEDIA_ROOT = BASE_DIR / "media" #onde as imagens media estarão no projeto
 
 LOGIN_REDIRECT_URL = 'leaderboard:homepage'  # Redirecionar para lista de tarefas após login
 LOGOUT_REDIRECT_URL = 'login'  # Redirecionar para página de login após logout
+
+DATE_INPUT_FORMATS = ['%d/%m/%Y', '%Y-%m-%d', '%m/%d/%Y', '%b %d %Y', '%d %b %Y']

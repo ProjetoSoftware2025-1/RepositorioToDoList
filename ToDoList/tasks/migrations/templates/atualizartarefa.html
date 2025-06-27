@@ -12,171 +12,143 @@
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura/altura total */
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #4facfe; /* Cor de fundo suave */
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
             display: flex;
-            flex-direction: column; /* Altera para coluna para melhor centralização vertical de um único item */
-            justify-content: center; /* Centraliza verticalmente */
-            align-items: center;     /* Centraliza horizontalmente */
-            min-height: 100vh;       /* Altura mínima da viewport */
+            justify-content: center; /* Centraliza o conteúdo horizontalmente */
+            align-items: center;     /* Centraliza o conteúdo verticalmente */
             margin: 0;
-            padding: 20px;           /* Espaçamento interno em telas menores */
+            padding: 20px;
             box-sizing: border-box;
+            position: relative; /* Para a barra lateral fixa */
         }
 
         /* ==================== */
         /* ESTILOS DO FORMULÁRIO */
         /* ==================== */
-        form {
+        .form-container {
             background-color: #ffffff;
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra mais suave */
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 500px; /* Largura máxima para o formulário */
+            max-width: 550px;
             box-sizing: border-box;
+            animation: fadeIn 0.8s ease-out forwards;
+            margin: 0 auto; /* Centraliza o container */
         }
 
         h1 {
-            color: #2c3e50; /* Cor escura para o título */
+            color: #2c3e50;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2.2em; /* Tamanho da fonte responsivo */
+            font-size: 2.5em;
+            font-weight: 700;
         }
 
-        /* Estilo para cada parágrafo (campo) do formulário */
         form p {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
-        /* Estilo para os rótulos (labels) dos campos */
         form p label {
-            display: block; /* Garante que o label ocupe sua própria linha */
-            margin-bottom: 8px;
-            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
             color: #34495e;
-            font-size: 1.1em;
+            font-size: 1.15em;
         }
 
-        /* Estilo para campos de texto e textareas */
         form input[type="text"],
         form textarea,
-        form input[type="date"], /* Adicionado para o DateField */
-        form input[type="number"] /* Adicione se tiver campos numéricos, como 'points' */
-        {
+        form input[type="date"],
+        form input[type="number"] {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #b0c4de; /* Borda suave */
-            border-radius: 6px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
             font-size: 1em;
             box-sizing: border-box;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transições suaves */
-            outline: none; /* Remove o contorno padrão no foco */
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+            outline: none;
         }
 
         form textarea {
-            resize: vertical; /* Permite redimensionar verticalmente */
-            min-height: 100px;
+            resize: vertical;
+            min-height: 120px;
         }
 
-        /* Estilo no foco para campos de texto e textareas */
-        form input[type="text"]:focus,
-        form textarea:focus,
-        form input[type="date"]:focus, /* Adicionado para o DateField */
-        form input[type="number"]:focus /* Adicionado para campos numéricos */
-        {
-            border-color: #3498db; /* Borda azul no foco */
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3); /* Sombra suave no foco */
+        form input:focus,
+        form textarea:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+            background-color: #ffffff;
+            transform: translateY(-2px);
         }
 
         /* ==================== */
-        /* ESTILOS DE CHECKBOX  */
+        /* BARRA LATERAL DE AÇÕES */
         /* ==================== */
-        form p input[type="checkbox"] {
-            width: auto; /* Permite que o checkbox tenha sua largura natural */
-            margin-right: 10px;
-            transform: scale(1.2); /* Aumenta um pouco o checkbox */
-        }
-
-        /* Ajuste específico para o label do checkbox quando usando {{ form }} */
-        /* Seleciona o parágrafo que contém um checkbox e então seu label */
-        form p:has(input[type="checkbox"]) label {
-            display: inline-block; /* Faz o label ficar ao lado do checkbox */
-            margin-left: 5px;
-            font-weight: normal; /* O label do checkbox geralmente não é negrito */
-            font-size: 1em;
-            vertical-align: middle; /* Alinha verticalmente com o checkbox */
+        .actions-sidebar {
+            position: fixed; /* Fixa a barra na tela */
+            right: 20px; /* Distância da borda direita */
+            top: 50%; /* Alinha ao centro verticalmente */
+            transform: translateY(-50%); /* Ajusta a posição para centralizar */
+            display: flex;
+            flex-direction: column; /* Organiza os botões em uma coluna */
+            gap: 15px; /* Espaçamento entre os botões */
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9); /* Fundo semi-transparente */
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(5px); /* Efeito de blur no fundo */
+            z-index: 1000; /* Garante que fique acima de outros elementos */
+            animation: fadeIn 0.8s ease-out forwards 0.2s;
         }
 
         /* ==================== */
         /* ESTILOS DOS BOTÕES   */
         /* ==================== */
-        .button-group {
-            display: flex; /* Permite que os botões fiquem lado a lado */
-            gap: 15px;     /* Espaçamento entre os botões */
-            margin-top: 25px;
-            flex-wrap: wrap; /* Permite que os botões quebrem a linha em telas pequenas */
-        }
-
-        button[type="submit"],
-        .btn-secondary,
-        .btn-concluir { /* Adicionado uma classe específica para o botão Concluir */
-            padding: 14px 25px;
+        .btn-action {
+            padding: 16px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1.1em;
-            font-weight: bold;
-            flex-grow: 1; /* Faz os botões crescerem para preencher o espaço */
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-decoration: none; /* Garante que links como botões não tenham sublinhado */
-            color: white; /* Garante a cor do texto para todos os botões */
-            display: flex; /* Para centralizar o texto se necessário */
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+            display: flex;
             justify-content: center;
             align-items: center;
+            min-width: 150px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Estilo do botão de salvar (verde) */
-        button[type="submit"] {
-            background-color: #28a745;
+        .btn-action:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
-        button[type="submit"]:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-        }
-
-        /* Estilo do botão secundário (cinza) */
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        /* Estilo do botão Concluir (laranja para diferenciar) */
-        .btn-concluir {
-            background-color: #ffc107; /* Laranja */
-            color: #343a40; /* Texto escuro para contraste */
-        }
-
-        .btn-concluir:hover {
-            background-color: #e0a800; /* Laranja mais escuro */
-            transform: translateY(-2px);
-        }
+        .btn-save { background-color: #28a745; }
+        .btn-complete { background-color: #ffc107; color: #343a40; }
+        .btn-delete { background-color: #e74c3c; }
+        .btn-cancel { background-color: #6c757d; }
 
         /* ==================== */
         /* ESTILOS DE ERRO      */
         /* ==================== */
         .errorlist {
-            color: #dc3545; /* Vermelho vibrante para erros */
-            list-style-type: none; /* Remove marcadores de lista */
+            color: #dc3545;
+            list-style-type: none;
             padding: 0;
             margin-top: 5px;
             margin-bottom: 15px;
@@ -189,74 +161,106 @@
         /* ==================== */
         /* RESPONSIVIDADE       */
         /* ==================== */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             body {
-                padding: 10px; /* Reduz o padding do body em telas menores */
+                flex-direction: column;
+                justify-content: flex-start;
             }
-            form {
-                padding: 25px;
-                margin: 0; /* Remove margens extras */
+            .form-container {
+                margin-top: 20px;
             }
-            h1 {
-                font-size: 1.8em;
+            .actions-sidebar {
+                position: relative; /* Remove a fixação */
+                top: auto;
+                left: auto;
+                right: auto;
+                transform: none;
+                margin-top: 30px;
+                flex-direction: row; /* Volta para a linha */
+                width: 100%;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.95);
             }
-            .button-group {
-                flex-direction: column; /* Empilha os botões verticalmente */
-                gap: 10px;
+            .btn-action {
+                min-width: unset;
+                flex-grow: 1;
             }
-            button[type="submit"], .btn-secondary, .btn-concluir {
-                padding: 12px 20px;
-                font-size: 1em;
-                width: 100%; /* Garante que ocupem a largura total */
-            }
+        }
+
+        /* ==================== */
+        /* ANIMAÇÃO             */
+        /* ==================== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <body>
-    <form method="post">
-        <h1>Editar Tarefa</h1>
-        {% csrf_token %}
+    <div class="form-container">
+        <form method="post" id="post-form">
+            <h1>Editar Tarefa</h1>
+            {% csrf_token %}
 
-        {% if form.non_field_errors %}
-            <div class="errorlist">
-                {{ form.non_field_errors }}
-            </div>
+            {% if form.non_field_errors %}
+                <div class="errorlist">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <p>
+                <label for="{{ form.titulo.id_for_label }}">{{ form.titulo.label }}</label>
+                {{ form.titulo }}
+                {{ form.titulo.errors }}
+            </p>
+
+            <p>
+                <label for="{{ form.descricao.id_for_label }}">{{ form.descricao.label }}</label>
+                {{ form.descricao }}
+                {{ form.descricao.errors }}
+            </p>
+
+            <p>
+                <label for="{{ form.data_vencimento.id_for_label }}">{{ form.data_vencimento.label }}</label>
+                {{ form.data_vencimento }}
+                {% if object.data_vencimento %}
+                <small class="form-text text-muted">
+                    Data salva: <strong>{{ object.data_vencimento|date:"d/m/Y" }}</strong>
+                </small>
+                {% endif %}
+                {{ form.data_vencimento.errors }}
+            </p>
+
+            <p>
+                {{ form.categoria }}
+            </p>
+        </form>
+    </div>
+
+    <div class="actions-sidebar">
+        <button type="submit" form="post-form" class="btn-action btn-save">Salvar</button>
+
+        {% if object.completo == False %}
+        <a href="{% url 'task:concluirtarefa' pk=object.id %}" class="btn-action btn-complete">Concluir</a>
         {% endif %}
 
-        <p>
-            <label for="{{ form.titulo.id_for_label }}">{{ form.titulo.label }}</label>
-            {{ form.titulo }}
-            {{ form.titulo.errors }}
-        </p>
+        <a href="{% url 'task:excluirtarefa' pk=object.id %}" class="btn-action btn-delete">Excluir</a>
 
-        <p>
-            <label for="{{ form.descricao.id_for_label }}">{{ form.descricao.label }}</label>
-            {{ form.descricao }}
-            {{ form.descricao.errors }}
-        </p>
-
-        <p>
-            <label for="{{ form.data_vencimento.id_for_label }}">{{ form.data_vencimento.label }}</label>
-            {{ form.data_vencimento }}
-            {{ form.data_vencimento.errors }}
-        </p>
-
-        <p>
-            {{ form.categoria }} </p>
-
-        <div class="button-group">
-            {% if object.completo == False %}
-            <button type="submit">Salvar Alterações</button>
-            <a href="{% url 'task:concluirtarefa' pk=object.id %}" class="btn-concluir">Concluir</a>
-            {% endif %}
-            <a href="{% url 'task:excluirtarefa' pk=object.id %}" class="btn-concluir" style="background-color: #d32f2f">Excluir</a>
-            <a href="{% url 'task:visualizartarefa' task.pk %}" class="btn-secondary">Cancelar</a>
-        </div>
-    </form>
+        <a href="{% url 'task:visualizartarefa' pk=object.id %}" class="btn-action btn-cancel">Cancelar</a>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Animação de fade-in para o container do formulário
+        document.addEventListener('DOMContentLoaded', function() {
+            const formContainer = document.querySelector('.form-container');
+            if (formContainer) {
+                formContainer.style.opacity = 1;
+                formContainer.style.transform = 'translateY(0)';
+            }
+        });
+    </script>
 </body>
 </html>

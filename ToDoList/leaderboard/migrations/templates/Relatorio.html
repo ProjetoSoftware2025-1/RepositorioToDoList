@@ -622,11 +622,9 @@
                     <tr>
                         <th>Tarefa</th>
                         <th>Status</th>
-                        <th>Prioridade</th>
                         <th>Categoria</th>
                         <th>Data Criação</th>
                         <th>Prazo</th>
-                        <th>Pontos</th>
                     </tr>
                 </thead>
                 <tbody id="tasks-table-body">
@@ -646,19 +644,8 @@
                                 {% endif %}
                             </span>
                         </td>
-                        <td>
-                            <span class="priority-{{ task.prioridade|lower }}">
-                                {% if task.prioridade == 'ALTA' %}
-                                    Alta
-                                {% elif task.prioridade == 'MEDIA' %}
-                                    Média
-                                {% else %}
-                                    Baixa
-                                {% endif %}
-                            </span>
-                        </td>
                         <td>{{ task.categoria }}</td>
-                        <td>{{ task.data_criacao|date:"d/m/Y" }}</td>
+                        <td>{{ task.criado_em|date:"d/m/Y" }}</td>
                         <td>
                             {% if task.data_vencimento %}
                                 {{ task.data_vencimento|date:"d/m/Y" }}
@@ -666,7 +653,6 @@
                                 Sem prazo
                             {% endif %}
                         </td>
-                        <td>{{ task.points|default:"0" }} pts</td>
                     </tr>
                     {% empty %}
                     <tr>

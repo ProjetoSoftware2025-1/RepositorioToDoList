@@ -20,6 +20,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
 from .forms import AtualizarPerfilForm
 from leaderboard.models import Competidor, Participacao
+from django.utils import timezone
 
 
 logger = logging.getLogger(__name__)
@@ -141,23 +142,24 @@ class ConcluirTarefa(LoginRequiredMixin, UpdateView):
         return initial
 
     def form_valid(self, form):
-        # Marcar a tarefa como concluída
-        response = super().form_valid(form)
+        tarefa = form.save(commit=False)
+        tarefa.completo = True
+        tarefa.data_conclusao = timezone.now().date()  # ⬅️ define data de conclusão
+        tarefa.save()
 
-        # Buscar o competidor correspondente ao usuário logado
+        # Competidor + pontuação
         try:
             competidor = self.request.user.competidor
         except Competidor.DoesNotExist:
             competidor = None
 
-        # Se for um competidor, incrementar pontuação em todas as ligas
         if competidor:
             participacoes = Participacao.objects.filter(competidor=competidor)
             for participacao in participacoes:
                 participacao.pontuacao += 1
                 participacao.save()
 
-        return response
+        return super().form_valid(form)
 
 class Login(LoginView):
     template_name = 'login.html'

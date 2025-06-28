@@ -450,28 +450,20 @@
             </div>
         </div>
 
-        <!-- LEADER SECTION -->
+        <!-- sessão de lider -->
         <div class="leader-card">
             <div class="leader-header">
-                <span class="crown">👑</span>
+                <span class="crown"></span>
                 <div>
                     <div class="leader-title">
-                        Líder da semana: 
-                        {% if leader %}
-                            {{ leader.get_full_name|default:leader.username }}
-                        {% else %}
-                            Nenhum líder
-                        {% endif %}
+                        
                     </div>
                     <div class="leader-subtitle">
-                        {% if leader %}
-                            {{ leader.completed_tasks|default:"0" }} tarefas concluídas e {{ leader.points|default:"0" }} pontos
-                        {% else %}
-                            Seja o primeiro líder da semana!
-                        {% endif %}
+                       
                     </div>
                 </div>
             </div>
+        
             
             <div class="stats-container">
                 <div class="stat-box pendente">

@@ -2,6 +2,7 @@ from django import forms
 from .models import Task
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+import datetime
 
 class TarefaForm(forms.ModelForm):
     class Meta:
@@ -11,6 +12,17 @@ class TarefaForm(forms.ModelForm):
             'titulo': forms.TextInput(attrs={'class': 'form-input'}),
             'descricao': forms.Textarea(attrs={'class': 'form-input form-textarea', 'rows': 5}),
             'data_vencimento': forms.DateInput(attrs={'type': 'date', 'class': 'form-input'}),
+            'categoria': forms.HiddenInput(),
+        }
+
+class EditarTarefaForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['titulo', 'descricao', 'data_vencimento', 'categoria']
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'form-input'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-input form-textarea', 'rows': 5}),
+            'data_vencimento': forms.TextInput(attrs={'placeholder': 'dd/mm/aaaa', 'class': 'form-input'}),
             'categoria': forms.HiddenInput(),
         }
 

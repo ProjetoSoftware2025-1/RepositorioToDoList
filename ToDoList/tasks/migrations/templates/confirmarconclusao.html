@@ -120,7 +120,7 @@
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Sim, Concluir</button>
-            <a href="{% url 'task:listatarefas' %}">Cancelar</a>
+            <a href="{% url 'task:visualizartarefa' task.pk %}">Cancelar</a>
         </form>
     </div>
 

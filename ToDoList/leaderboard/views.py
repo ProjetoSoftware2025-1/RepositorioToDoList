@@ -1,5 +1,5 @@
 import json
-import datetime
+from datetime import datetime, date
 import calendar
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
@@ -15,65 +15,56 @@ from .forms import LigaForm
 from .models import Competidor, Participacao, Liga
 from django.contrib import messages
 from .forms import IngressoLigaForm
+from tasks.models import Task
 
 # Create your views here.
 class Homepage(ListView):
     template_name = "dashboard.html"
     model = Task
 
-#dados mockados pra view de ranking
-def ranking_view(request):
-    usuarios_mock = [
-        {"nome": "Alice", "score_semanal": 120, "score_total": 780},
-        {"nome": "Bruno", "score_semanal": 110, "score_total": 750},
-        {"nome": "Carla", "score_semanal": 150, "score_total": 800},
-        {"nome": "Daniel", "score_semanal": 90, "score_total": 600},
-        {"nome": "Eduarda", "score_semanal": 100, "score_total": 700},
-        {"nome": "Fernando", "score_semanal": 130, "score_total": 790},
-    ]
-
-    # Ordenar por score_total
-    usuarios_ordenados = sorted(usuarios_mock, key=lambda x: x["score_total"], reverse=True)
-
-    ranking_users = []
-    for i, usuario in enumerate(usuarios_ordenados, start=1):
-        nome = usuario["nome"]
-        user_data = {
-            "username": nome,
-            "first_name": nome,
-            "get_full_name": f"{nome} da Silva"  # ou apenas nome se quiser
-        }
-        ranking_users.append({
-            "user": user_data,
-            "points": usuario["score_total"],
-            "position": i
-        })
-
-    context = {
-       "ranking_users": ranking_users,
-       #"user": "Carla"  # Nome do usuário logado, para marcação (current-user)
-    }
-
-    return render(request, 'ranking.html', context)
-
+@login_required
 def relatorio_view(request):
-    # Dados mockados para o relatório
+    hoje = date.today()
+    inicio_semana = hoje - timedelta(days=hoje.weekday())
+
+    tarefas_usuario = Task.objects.filter(user=request.user)
+
+    total_concluidas = tarefas_usuario.filter(completo=True).count()
+    total_criadas = tarefas_usuario.count()
+
+    percentual_conclusao = int((total_concluidas / total_criadas) * 100) if total_criadas > 0 else 0
+
     dados_relatorio = {
-        "total_tasks": 15,
-        "tasks_concluidas": 12,
-        "tasks_pendentes": 3,
+        "total_tasks": total_criadas,
+        "tasks_concluidas": total_concluidas,
+        "tasks_pendentes": tarefas_usuario.filter(completo=False).count(),
         "performance_semanal": [
-            {"semana": "Semana 1", "concluidas": 5},
-            {"semana": "Semana 2", "concluidas": 7},
-            {"semana": "Semana 3", "concluidas": 3},
-            {"semana": "Semana 4", "concluidas": 8},
+            {
+                "semana": "Esta Semana",
+                "concluidas": tarefas_usuario.filter(completo=True, criado_em__date__gte=inicio_semana).count()
+            },
+            {
+                "semana": "Hoje",
+                "concluidas": tarefas_usuario.filter(completo=True, criado_em__date=hoje).count()
+            }
         ]
     }
-    
+
+    # Se precisar da lista completa de tarefas para a tabela
     context = {
         "dados_relatorio": dados_relatorio,
+        "percentual_conclusao": percentual_conclusao,
+        "total_tarefas_trabalho": tarefas_usuario.filter(categoria__iexact='Trabalho').count(),
+        "total_tarefas_estudos": tarefas_usuario.filter(categoria__iexact='Estudos').count(),
+        "total_tarefas_pessoal": tarefas_usuario.filter(categoria__iexact='Pessoal').count(),
+        "total_tarefas_atrasadas": tarefas_usuario.filter(completo=False, data_vencimento__lt=hoje).count(),
+        "total_tarefas_afazer": tarefas_usuario.filter(completo=False, data_vencimento__gte=hoje).count(),
+        "total_tarefas_concluidas": total_concluidas,
+        "total_tarefas_concluidas_hoje": dados_relatorio["performance_semanal"][1]["concluidas"],
+        "total_tarefas_concluidas_semana": dados_relatorio["performance_semanal"][0]["concluidas"],
+        "lista_todas_tarefas": tarefas_usuario,  # Para popular a tabela
     }
-    
+
     return render(request, 'relatorio.html', context)
 
 @login_required
@@ -322,3 +313,58 @@ def ingressar_liga(request):
         form = IngressoLigaForm()
 
     return render(request, 'ingressar_liga.html', {'form': form})
+
+def relatorio_view(request):
+    hoje = date.today()
+    inicio_semana = hoje - timedelta(days=hoje.weekday())
+
+    tarefas_usuario = Task.objects.filter(user=request.user)
+    tarefas_concluidas = tarefas_usuario.filter(completo=True)
+
+    # Contagens de tarefas concluídas com base em data_conclusao
+    total_tarefas_concluidas_hoje = tarefas_concluidas.filter(data_conclusao=hoje).count()
+    total_tarefas_concluidas_semana = tarefas_concluidas.filter(data_conclusao__gte=inicio_semana).count()
+    total_tarefas_concluidas = tarefas_concluidas.count()
+
+    # Tarefas criadas (completo ou não)
+    total_tarefas_criadas = tarefas_usuario.count()
+    
+    # Status: Em progresso e atrasadas
+    total_tarefas_em_progresso = tarefas_usuario.filter(completo=False, data_vencimento__gte=hoje).count()
+    total_tarefas_atrasadas = tarefas_usuario.filter(completo=False, data_vencimento__lt=hoje).count()
+
+    # Por categoria
+    total_tarefas_trabalho = tarefas_usuario.filter(categoria__iexact='Trabalho').count()
+    total_tarefas_estudos = tarefas_usuario.filter(categoria__iexact='Estudos').count()
+    total_tarefas_pessoal = tarefas_usuario.filter(categoria__iexact='Pessoal').count()
+
+    # Percentual de conclusão
+    percentual_conclusao = 0
+    if total_tarefas_criadas > 0:
+        percentual_conclusao = int((total_tarefas_concluidas / total_tarefas_criadas) * 100)
+
+    # Atribuir status manual para cada tarefa
+    lista_todas_tarefas = []
+    for tarefa in tarefas_usuario:
+        if tarefa.completo:
+            tarefa.status = 'CONCLUIDA'
+        elif tarefa.data_vencimento < hoje:
+            tarefa.status = 'ATRASADA'
+        else:
+            tarefa.status = 'EM_PROGRESSO'
+        lista_todas_tarefas.append(tarefa)
+
+    context = {
+        'total_tarefas_concluidas_hoje': total_tarefas_concluidas_hoje,
+        'total_tarefas_concluidas_semana': total_tarefas_concluidas_semana,
+        'total_tarefas_concluidas': total_tarefas_concluidas,
+        'total_tarefas_afazer': total_tarefas_em_progresso,
+        'total_tarefas_atrasadas': total_tarefas_atrasadas,
+        'percentual_conclusao': percentual_conclusao,
+        'total_tarefas_trabalho': total_tarefas_trabalho,
+        'total_tarefas_estudos': total_tarefas_estudos,
+        'total_tarefas_pessoal': total_tarefas_pessoal,
+        'lista_todas_tarefas': lista_todas_tarefas,
+    }
+
+    return render(request, 'relatorio.html', context)

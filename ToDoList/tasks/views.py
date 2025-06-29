@@ -1,9 +1,9 @@
 from django.shortcuts import render, reverse, get_object_or_404, redirect
-from django.views.generic import TemplateView, ListView, CreateView, FormView, UpdateView, RedirectView, DeleteView
+from django.views.generic import TemplateView, ListView, CreateView, FormView, UpdateView, RedirectView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .models import Task
-from .forms import TarefaForm, ConcluirTarefaForm, CadastrarUsuario
+from .forms import TarefaForm, EditarTarefaForm, ConcluirTarefaForm, CadastrarUsuario
 import logging
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
@@ -19,6 +19,8 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
 from .forms import AtualizarPerfilForm
+from leaderboard.models import Competidor, Participacao
+from django.utils import timezone
 
 
 logger = logging.getLogger(__name__)
@@ -92,9 +94,16 @@ class CriarTarefa(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('task:listatarefas')
 
+class VisualizarTarefa (LoginRequiredMixin, DetailView):
+    template_name = "visualizartarefa.html"
+    model = Task
+    context_object_name = "task"
+
+
+
 class AtualizarTarefa(UpdateView):
     template_name = "atualizartarefa.html"
-    form_class = TarefaForm
+    form_class = EditarTarefaForm
     model = Task
 
     def form_valid(self, form):
@@ -110,6 +119,17 @@ class ExcluirTarefa(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         return reverse('task:listatarefas')
 
+# class ConcluirTarefa(LoginRequiredMixin, UpdateView):
+#     model = Task
+#     form_class = ConcluirTarefaForm
+#     template_name = "confirmarconclusao.html"
+#     success_url = reverse_lazy("task:listatarefas")
+
+#     def get_initial(self):
+#         initial = super().get_initial()
+#         initial['completo'] = True
+#         return initial
+
 class ConcluirTarefa(LoginRequiredMixin, UpdateView):
     model = Task
     form_class = ConcluirTarefaForm
@@ -120,6 +140,26 @@ class ConcluirTarefa(LoginRequiredMixin, UpdateView):
         initial = super().get_initial()
         initial['completo'] = True
         return initial
+
+    def form_valid(self, form):
+        tarefa = form.save(commit=False)
+        tarefa.completo = True
+        tarefa.data_conclusao = timezone.now().date()  # ⬅️ define data de conclusão
+        tarefa.save()
+
+        # Competidor + pontuação
+        try:
+            competidor = self.request.user.competidor
+        except Competidor.DoesNotExist:
+            competidor = None
+
+        if competidor:
+            participacoes = Participacao.objects.filter(competidor=competidor)
+            for participacao in participacoes:
+                participacao.pontuacao += 1
+                participacao.save()
+
+        return super().form_valid(form)
 
 class Login(LoginView):
     template_name = 'login.html'

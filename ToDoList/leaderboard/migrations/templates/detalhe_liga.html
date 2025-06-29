@@ -101,11 +101,13 @@
         }
 
         .user-item {
-            display: flex;
+             display: flex;
             align-items: center;
             padding: 10px;
             background: #34495e;
             border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
         }
 
         .user-avatar-mini {
@@ -684,31 +686,19 @@
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
-                <span>🏆</span>
-                <span>Ranking</span>
-            </a>
             <a href="{% url 'task:pomodoro' %}" class="nav-item">
                 <span>🍅</span>
                 <span>Pomodoro</span>
             </a>
-            <a href="{% url 'leaderboard:ingressar_liga' %}" class="nav-item">
-                <span>🔑</span>
-                <span>Ingressar na Liga</span>
-            </a>
             <a href="{% url 'leaderboard:minhas_ligas' %}" class="nav-item active">
-                <span>👊</span>
-                <span>Minhas Ligas</span>
-            </a>
-            <a href="{% url 'leaderboard:criar_liga' %}" class="nav-item">
                 <span>🏆</span>
-                <span>Criar uma liga</span>
+                <span>Minhas Ligas</span>
             </a>
             <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
         
         <div class="user-section">
-            <div class="user-item">
+           <a href="{% url 'task:atualizarperfil' %}" class="user-item">             
                 <div class="user-avatar-mini">
                     {% if user.first_name %}
                         {{ user.first_name.0|upper }}
@@ -717,6 +707,7 @@
                     {% endif %}
                 </div>
                 <span>{{ user.get_full_name|default:user.username }}</span>
+            </a>
             </div>
         </div>
     </div>
@@ -756,27 +747,31 @@
             <h3 style="margin-top: 0; margin-bottom: 20px;">Classificação</h3>
             
             <ul class="participants-list">
-                {% for participacao in participacoes %}
-                <li class="participant-item">
-                    <div class="participant-info">
-                        <div class="participant-avatar">
-                            {{ participacao.competidor.usuario.first_name.0|default:"U" }}
-                        </div>
-                        <div>
-                            <strong>{{ participacao.competidor.usuario.get_full_name|default:participacao.competidor.usuario.username }}</strong>
-                            <div style="font-size: 14px; color: #7f8c8d;">@{{ participacao.competidor.usuario.username }}</div>
-                        </div>
-                    </div>
-                    <div style="font-weight: bold; color: #2c3e50;">
-                        {{ participacao.pontuacao }} pts
-                    </div>
-                </li>
-                {% empty %}
-                <li style="text-align: center; padding: 30px; color: #7f8c8d;">
-                    Nenhum participante nesta liga
-                </li>
-                {% endfor %}
-            </ul>
+    {% for participacao in participacoes %}
+    <li class="participant-item">
+        <div class="participant-info">
+            <div class="participant-avatar">
+                {{ participacao.competidor.usuario.first_name.0|default:"U" }}
+            </div>
+            <div>
+                <strong>
+                    {{ forloop.counter }}º 
+                    {{ participacao.competidor.usuario.get_full_name|default:participacao.competidor.usuario.username }}
+                    {% if forloop.first %} 👑{% endif %}
+                </strong>
+                <div style="font-size: 14px; color: #7f8c8d;">@{{ participacao.competidor.usuario.username }}</div>
+            </div>
+        </div>
+        <div style="font-weight: bold; color: #2c3e50;">
+            {{ participacao.pontuacao }} pts
+        </div>
+    </li>
+    {% empty %}
+    <li style="text-align: center; padding: 30px; color: #7f8c8d;">
+        Nenhum participante nesta liga
+    </li>
+    {% endfor %}
+</ul>
         </div>
 
         <div style="margin-top: 30px;">

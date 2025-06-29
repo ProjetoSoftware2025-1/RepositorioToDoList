@@ -102,11 +102,13 @@
         }
 
         .user-item {
-            display: flex;
+             display: flex;
             align-items: center;
             padding: 10px;
             background: #34495e;
             border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
         }
 
         .user-avatar-mini {
@@ -661,31 +663,19 @@
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
-                <span>🏆</span>
-                <span>Ranking</span>
-            </a>
             <a href="{% url 'task:pomodoro' %}" class="nav-item">
                 <span>🍅</span>
                 <span>Pomodoro</span>
             </a>
-            <a href="{% url 'leaderboard:ingressar_liga' %}" class="nav-item active">
-                <span>🔑</span>
-                <span>Ingressar na Liga</span>
-            </a>
-            <a href="{% url 'leaderboard:minhas_ligas' %}" class="nav-item">
-                <span>👊</span>
-                <span>Minhas Ligas</span>
-            </a>
-            <a href="{% url 'leaderboard:criar_liga' %}" class="nav-item">
+            <a href="{% url 'leaderboard:minhas_ligas' %}" class="nav-item active">
                 <span>🏆</span>
-                <span>Criar uma liga</span>
+                <span>Minhas Ligas</span>
             </a>
             <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
         
         <div class="user-section">
-            <div class="user-item">
+          <a href="{% url 'task:atualizarperfil' %}" class="user-item">           
                 <div class="user-avatar-mini">
                     {% if user.first_name %}
                         {{ user.first_name.0|upper }}
@@ -694,6 +684,7 @@
                     {% endif %}
                 </div>
                 <span>{{ user.get_full_name|default:user.username }}</span>
+            </a>
             </div>
         </div>
     </div>

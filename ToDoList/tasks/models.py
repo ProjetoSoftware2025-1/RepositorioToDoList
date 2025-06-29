@@ -14,6 +14,7 @@ class Task(models.Model):
     completo = models.BooleanField(default=False)
     criado_em = models.DateTimeField(auto_now_add=True)
     data_vencimento = models.DateField(default=timezone.now)
+    data_conclusao = models.DateField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

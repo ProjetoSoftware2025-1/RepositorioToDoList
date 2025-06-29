@@ -106,6 +106,8 @@
             padding: 10px;
             background: #34495e;
             border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
         }
 
         .user-avatar-mini {
@@ -483,31 +485,19 @@
                 <span>📅</span>
                 <span>Calendário</span>
             </a>
-            <a href="{% url 'leaderboard:ranking' %}" class="nav-item">
-                <span>🏆</span>
-                <span>Ranking</span>
-            </a>
             <a href="{% url 'task:pomodoro' %}" class="nav-item">
                 <span>🍅</span>
                 <span>Pomodoro</span>
             </a>
-            <a href="{% url 'leaderboard:ingressar_liga' %}" class="nav-item">
-                <span>🔑</span>
-                <span>Ingressar na Liga</span>
-            </a>
             <a href="{% url 'leaderboard:minhas_ligas' %}" class="nav-item">
-                <span>👊</span>
-                <span>Minhas Ligas</span>
-            </a>
-            <a href="{% url 'leaderboard:criar_liga' %}" class="nav-item">
                 <span>🏆</span>
-                <span>Criar uma liga</span>
+                <span>Minhas Ligas</span>
             </a>
             <button class="btn-sair" onclick="logout()"><span>📤</span> <span class="span-btn">Sair</span> </button>
         </div>
         
         <div class="user-section">
-            <div class="user-item">
+           <a href="{% url 'task:atualizarperfil' %}" class="user-item">    
                 <div class="user-avatar-mini">
                     {% if user.first_name %}
                         {{ user.first_name.0|upper }}
@@ -516,6 +506,7 @@
                     {% endif %}
                 </div>
                 <span>{{ user.get_full_name|default:user.username }}</span>
+            </a>
             </div>
         </div>
     </div>
@@ -570,11 +561,13 @@
                 </div>
                 
                 <div class="productivity-info">
-                    <div class="productivity-score">{{ productivity_score|default:"75" }}%</div>
-                    <div class="productivity-label">de comprometimento</div>
-                    
+                    <div class="productivity-score">
+                        {{ percentual_conclusao|default:"0" }}%
+                    </div>
+                    <div class="productivity-label">das tarefas concluídas</div>
+
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{ productivity_score|default:'75' }}%"></div>
+                        <div class="progress-fill" style="width: {{ percentual_conclusao|default:"0" }}%"></div>
                     </div>
                 </div>
 
@@ -588,9 +581,13 @@
                         <div class="stat-label">Atrasadas</div>
                     </div>
                     <div class="stat-item concluidas">
-                        <div class="stat-value" data-target="{{ percentual_conclusao|default:'0' }}">0</div>
-                        <div class="stat-label">% Concluídas</div>
+                    <div class="stat-value" data-target="{{ total_tarefas_concluidas|default:'0' }}">
+                        {{ total_tarefas_concluidas|default:'0' }}
                     </div>
+                    <div class="stat-label">
+                        Concluídas ({{ percentual_conclusao|default:'0' }}%)
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -613,11 +610,9 @@
                     <tr>
                         <th>Tarefa</th>
                         <th>Status</th>
-                        <th>Prioridade</th>
                         <th>Categoria</th>
                         <th>Data Criação</th>
                         <th>Prazo</th>
-                        <th>Pontos</th>
                     </tr>
                 </thead>
                 <tbody id="tasks-table-body">
@@ -637,19 +632,8 @@
                                 {% endif %}
                             </span>
                         </td>
-                        <td>
-                            <span class="priority-{{ task.prioridade|lower }}">
-                                {% if task.prioridade == 'ALTA' %}
-                                    Alta
-                                {% elif task.prioridade == 'MEDIA' %}
-                                    Média
-                                {% else %}
-                                    Baixa
-                                {% endif %}
-                            </span>
-                        </td>
                         <td>{{ task.categoria }}</td>
-                        <td>{{ task.data_criacao|date:"d/m/Y" }}</td>
+                        <td>{{ task.criado_em|date:"d/m/Y" }}</td>
                         <td>
                             {% if task.data_vencimento %}
                                 {{ task.data_vencimento|date:"d/m/Y" }}
@@ -657,7 +641,6 @@
                                 Sem prazo
                             {% endif %}
                         </td>
-                        <td>{{ task.points|default:"0" }} pts</td>
                     </tr>
                     {% empty %}
                     <tr>

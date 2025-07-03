@@ -204,7 +204,7 @@ class Pomodoro(TemplateView):
 class AtualizarPerfil(LoginRequiredMixin, FormView):
     template_name = 'atualizarperfil.html'
     form_class = AtualizarPerfilForm
-    success_url = reverse_lazy('leaderboard:dashboard')
+    success_url = reverse_lazy('leaderboard:homepage')
 
     def get_initial(self):
         return {
